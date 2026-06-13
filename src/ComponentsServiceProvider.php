@@ -86,6 +86,11 @@ class ComponentsServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../resources/css/components.css' => resource_path('css/components.css'),
         ], 'components-theme');
+
+        // Compiled JS for the asset-backed components (Monaco, Tiptap).
+        $this->publishes([
+            __DIR__.'/../public/devdojo' => public_path('devdojo'),
+        ], 'devdojo-assets');
     }
 
     /**

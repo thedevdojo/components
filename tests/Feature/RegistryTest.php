@@ -8,6 +8,7 @@ it('discovers every bundled component', function () {
     expect($names)->toContain(
         'button', 'input', 'label', 'card', 'checkbox', 'radio', 'toggle',
         'modal', 'dropdown', 'popover', 'tooltip', 'alert', 'toast',
+        'drawer', 'monaco-editor', 'tiptap',
     );
 });
 
@@ -31,5 +32,5 @@ it('resolves dependencies before the component that needs them', function () {
 
 it('groups components by category in display order', function () {
     expect(Components::byCategory()->keys()->all())
-        ->toBe(['Forms', 'Layout', 'Overlays', 'Feedback']);
+        ->toBe(['Forms', 'Layout', 'Overlays', 'Feedback', 'Editors']);
 });

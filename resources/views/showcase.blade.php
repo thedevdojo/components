@@ -260,6 +260,39 @@
                     </x-components.tooltip>
                 </div>
             </x-devdojo-components::demo>
+
+            <x-devdojo-components::demo name="drawer" title="Drawer"
+                description="A teleported slide-in panel from the left or right, with header, content and footer slots.">
+                <div class="flex flex-wrap gap-3">
+                    <x-components.drawer position="right">
+                        <x-slot:trigger><x-components.button>Open right drawer</x-components.button></x-slot:trigger>
+                        <x-slot:header>Edit profile</x-slot:header>
+                        <x-slot:content>
+                            <div class="grid gap-4">
+                                <x-components.input label="Name" value="Tony Lea" />
+                                <x-components.input label="Email" type="email" value="tony@devdojo.com" />
+                                <x-components.toggle label="Public profile" checked />
+                            </div>
+                        </x-slot:content>
+                        <x-slot:footer>
+                            <x-components.button variant="ghost" x-on:click="open = false">Cancel</x-components.button>
+                            <x-components.button x-on:click="open = false">Save changes</x-components.button>
+                        </x-slot:footer>
+                    </x-components.drawer>
+
+                    <x-components.drawer position="left">
+                        <x-slot:trigger><x-components.button variant="outline">Open left drawer</x-components.button></x-slot:trigger>
+                        <x-slot:header>Navigation</x-slot:header>
+                        <x-slot:content>
+                            <nav class="grid gap-1">
+                                <a href="#" class="rounded-medium px-3 py-2 text-sm text-foreground/80 hover:bg-secondary">Dashboard</a>
+                                <a href="#" class="rounded-medium px-3 py-2 text-sm text-foreground/80 hover:bg-secondary">Projects</a>
+                                <a href="#" class="rounded-medium px-3 py-2 text-sm text-foreground/80 hover:bg-secondary">Settings</a>
+                            </nav>
+                        </x-slot:content>
+                    </x-components.drawer>
+                </div>
+            </x-devdojo-components::demo>
         </section>
 
         {{-- ============================ FEEDBACK ============================ --}}
@@ -285,6 +318,30 @@
                     <x-components.button variant="outline" x-on:click="window.toast('Something went wrong', 'error', 'Please try again later.')">Error</x-components.button>
                     <x-components.button variant="outline" x-on:click="window.toast('Heads up', 'warning')">Warning</x-components.button>
                     <x-components.button variant="outline" x-on:click="window.toast('New update available', 'info')">Info</x-components.button>
+                </div>
+            </x-devdojo-components::demo>
+        </section>
+
+        {{-- ============================ EDITORS ============================ --}}
+        <section id="editors" class="scroll-mt-32 space-y-8">
+            <x-devdojo-components::section title="Editors" subtitle="Powerful editing surfaces that lazy-load on demand." />
+
+            <x-devdojo-components::demo name="monaco-editor" title="Monaco Editor"
+                description="The VS Code editor as a Blade component — syntax highlighting, themes and auto dark mode.">
+                <div class="w-full">
+                    <x-components.monaco-editor language="javascript" :height="260" :content="'// The VS Code editor, in a Blade component.
+function greet(name) {
+    return `Hello, ${name}!`;
+}
+
+console.log(greet(\'DevDojo\'));'" />
+                </div>
+            </x-devdojo-components::demo>
+
+            <x-devdojo-components::demo name="tiptap" title="Tiptap Editor"
+                description="A rich-text WYSIWYG editor with a configurable toolbar. Works with wire:model.">
+                <div class="w-full">
+                    <x-components.tiptap :content="'<h2>Rich text, the Blade way</h2><p>Select some text to format it, add <strong>bold</strong>, <em>italic</em>, or a <a href=\'https://devdojo.com\'>link</a>.</p><ul><li>Bullet lists</li><li>Numbered lists</li></ul>'" />
                 </div>
             </x-devdojo-components::demo>
         </section>

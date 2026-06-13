@@ -1,0 +1,19 @@
+{
+    "name": "drawer",
+    "label": "Drawer",
+    "description": "A teleported slide-in panel from the left or right, with header, content and footer slots and optional parent scaling.",
+    "category": "Overlays",
+    "dependencies": ["button"],
+    "props": [
+        { "name": "position", "type": "select", "default": "right", "options": ["right", "left"], "description": "Which side the drawer slides in from." },
+        { "name": "open", "type": "boolean", "default": false, "description": "Whether the drawer is open on load." },
+        { "name": "parent", "type": "text", "default": null, "description": "Optional CSS selector of an element to subtly scale/dim while the drawer is open." },
+        { "name": "zIndex", "type": "text", "default": "50", "description": "The stacking z-index for the overlay." }
+    ],
+    "slots": [
+        { "name": "trigger", "description": "The element that opens the drawer (default slot)." },
+        { "name": "header", "description": "Sticky header area." },
+        { "name": "content", "description": "Main scrollable content." },
+        { "name": "footer", "description": "Sticky footer, usually actions." }
+    ]
+}

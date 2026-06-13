@@ -103,14 +103,16 @@ class AddCommand extends Command
     }
 
     /**
-     * Add a single component, returning 'added' or 'skipped'.
+     * Add a single component, returning 'added' or 'skipped'. The whole
+     * component directory is copied (some components ship sub-views such as
+     * tiptap's toolbar icons), with Blade files rewritten and metadata skipped.
      */
     protected function addComponent(string $name): string
     {
-        $source = Components::sourcePath($name.'/index.blade.php');
-        $destination = $this->destinationPath($name);
+        $sourceDir = Components::sourcePath($name);
+        $destinationDir = $this->destinationDir($name);
 
-        if ($this->files->exists($destination) && ! $this->option('force')) {
+        if ($this->files->isDirectory($destinationDir) && ! $this->option('force')) {
             $this->components->twoColumnDetail(
                 "<fg=yellow>$name</>",
                 '<fg=yellow>exists, skipped (use --force)</>'
@@ -119,12 +121,27 @@ class AddCommand extends Command
             return 'skipped';
         }
 
-        $this->files->ensureDirectoryExists(dirname($destination));
-        $this->files->put($destination, $this->transform($this->files->get($source)));
+        foreach ($this->files->allFiles($sourceDir) as $file) {
+            // Metadata is for the package's registry, not the host app.
+            if ($file->getExtension() === 'json') {
+                continue;
+            }
+
+            $target = $destinationDir.'/'.$file->getRelativePathname();
+            $this->files->ensureDirectoryExists(dirname($target));
+
+            $contents = $this->files->get($file->getPathname());
+
+            if (str_ends_with($file->getFilename(), '.blade.php')) {
+                $contents = $this->transform($contents);
+            }
+
+            $this->files->put($target, $contents);
+        }
 
         $this->components->twoColumnDetail(
             "<fg=green>$name</>",
-            '<fg=gray>'.$this->relativePath($destination).'</>'
+            '<fg=gray>'.$this->relativePath($destinationDir).'/</>'
         );
 
         return 'added';
@@ -132,22 +149,23 @@ class AddCommand extends Command
 
     /**
      * Rewrite the preview namespace references to root anonymous components,
-     * e.g. <x-components.button /> becomes <x-button /> once added.
+     * e.g. <x-components.button /> becomes <x-button /> and a dynamic
+     * component="components.tiptap.icons.bold" becomes "tiptap.icons.bold".
      */
     protected function transform(string $contents): string
     {
         $namespace = Components::NAMESPACE;
 
         return str_replace(
-            ["<x-{$namespace}.", "</x-{$namespace}."],
-            ['<x-', '</x-'],
+            ["<x-{$namespace}.", "</x-{$namespace}.", "component=\"{$namespace}.", "component='{$namespace}."],
+            ['<x-', '</x-', 'component="', "component='"],
             $contents
         );
     }
 
-    protected function destinationPath(string $name): string
+    protected function destinationDir(string $name): string
     {
-        return resource_path(trim((string) config('components.path', 'views/components'), '/')."/{$name}/index.blade.php");
+        return resource_path(trim((string) config('components.path', 'views/components'), '/')."/{$name}");
     }
 
     protected function relativePath(string $path): string
@@ -167,6 +185,12 @@ class AddCommand extends Command
 
         if (in_array('toast', $added, true)) {
             $this->line('  <fg=gray>Tip: place <x-toast /> once in your layout to enable notifications.</>');
+        }
+
+        $needsAssets = collect($added)->contains(fn ($name) => Components::get($name)['assets'] ?? false);
+
+        if ($needsAssets) {
+            $this->line('  <fg=yellow>Some components need their JS bundle — run:</> <fg=green>php artisan vendor:publish --tag=devdojo-assets</>');
         }
     }
 }

@@ -104,8 +104,28 @@ Re‑run with `--force` to overwrite components you've already added.
 | Dropdown | `<x-dropdown>` | Click‑to‑open menu anchored to a trigger |
 | Popover | `<x-popover>` | The dropdown's positioning engine, fully placeable |
 | Tooltip | `<x-tooltip>` | Pure‑Alpine, hover/focus, 4 positions |
-| Alert | `<x-alert>` | 6 contextual variants |
+| Drawer | `<x-drawer>` | Teleported slide‑in panel (left/right) |
+| Alert | `<x-alert>` | 6 contextual variants with built‑in icons |
 | Toast | `<x-toast>` | Global notification stack |
+| Monaco Editor | `<x-monaco-editor>` | The VS Code editor — needs JS assets ⚡ |
+| Tiptap | `<x-tiptap>` | Rich‑text WYSIWYG editor — needs JS assets ⚡ |
+
+### ⚡ Asset‑backed components
+
+`monaco-editor` and `tiptap` lazy‑load a compiled JavaScript bundle. After
+adding either, publish the bundles once:
+
+```bash
+php artisan vendor:publish --tag=devdojo-assets
+```
+
+This copies the editors' JS/CSS into `public/devdojo/`. They are loaded on
+demand the first time the component appears on a page — nothing is added to your
+main bundle. To rebuild the assets from source (in this package):
+
+```bash
+npm install && npm run build   # outputs to public/devdojo
+```
 
 ### Toast usage
 
@@ -159,4 +179,3 @@ Built by [Tony Lea](https://twitter.com/tnylea) and the
 ## License
 
 The MIT License (MIT). See [LICENSE.md](LICENSE.md).
-# components
