@@ -1,0 +1,14 @@
+{
+    "name": "card",
+    "label": "Card",
+    "description": "A flexible content container with optional header and footer slots and three sizes.",
+    "category": "Layout",
+    "dependencies": [],
+    "props": [
+        { "name": "size", "type": "select", "default": "md", "options": ["sm", "md", "lg"], "description": "Controls padding and base font size." }
+    ],
+    "slots": [
+        { "name": "header", "description": "Optional header area." },
+        { "name": "footer", "description": "Optional footer area." }
+    ]
+}

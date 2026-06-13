@@ -1,0 +1,18 @@
+{
+    "name": "modal",
+    "label": "Modal",
+    "description": "An accessible, teleported dialog with focus trapping, header/content/footer slots, and event-driven open/close.",
+    "category": "Overlays",
+    "dependencies": ["button"],
+    "props": [
+        { "name": "open", "type": "boolean", "default": false, "description": "Whether the modal is open on load." },
+        { "name": "closeButton", "type": "boolean", "default": true, "description": "Show the top-right close button." },
+        { "name": "zIndex", "type": "text", "default": "50", "description": "The stacking z-index for the overlay." }
+    ],
+    "slots": [
+        { "name": "trigger", "description": "Custom element that opens the modal." },
+        { "name": "header", "description": "Modal heading." },
+        { "name": "content", "description": "Main modal body." },
+        { "name": "footer", "description": "Action row, usually buttons." }
+    ]
+}

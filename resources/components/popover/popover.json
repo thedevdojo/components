@@ -1,0 +1,16 @@
+{
+    "name": "popover",
+    "label": "Popover",
+    "description": "A teleported floating panel that follows its trigger on scroll and resize. The same engine that powers the dropdown, with full control over placement.",
+    "category": "Overlays",
+    "dependencies": [],
+    "props": [
+        { "name": "position", "type": "select", "default": "bottom", "options": ["bottom", "top", "left", "right"], "description": "Which side of the trigger the popover opens on." },
+        { "name": "align", "type": "select", "default": "left", "options": ["left", "center", "right", "bottom"], "description": "Alignment of the popover relative to the trigger." },
+        { "name": "gap", "type": "text", "default": "2", "description": "Spacing between trigger and popover (Tailwind spacing units)." }
+    ],
+    "slots": [
+        { "name": "trigger", "description": "The clickable element that opens the popover." },
+        { "name": "content", "description": "Pre-styled panel container slot." }
+    ]
+}

@@ -1,0 +1,16 @@
+{
+    "name": "tooltip",
+    "label": "Tooltip",
+    "description": "A lightweight, pure-Alpine tooltip that appears on hover or focus, with four positions and an optional arrow.",
+    "category": "Overlays",
+    "dependencies": [],
+    "props": [
+        { "name": "position", "type": "select", "default": "top", "options": ["top", "bottom", "left", "right"], "description": "Where the tooltip appears relative to the trigger." },
+        { "name": "content", "type": "text", "default": "", "description": "Tooltip text. Use the 'tip' slot for rich content." },
+        { "name": "arrow", "type": "boolean", "default": true, "description": "Show the little pointer arrow." },
+        { "name": "delay", "type": "text", "default": "100", "description": "Delay in milliseconds before showing." }
+    ],
+    "slots": [
+        { "name": "tip", "description": "Rich tooltip content (overrides the content prop)." }
+    ]
+}

@@ -1,0 +1,16 @@
+{
+    "name": "dropdown",
+    "label": "Dropdown",
+    "description": "A click-to-open menu anchored to its trigger, with configurable position, alignment, and gap.",
+    "category": "Overlays",
+    "dependencies": [],
+    "props": [
+        { "name": "position", "type": "select", "default": "bottom", "options": ["bottom", "top", "left", "right"], "description": "Which side of the trigger the menu opens on." },
+        { "name": "align", "type": "select", "default": "left", "options": ["left", "center", "right"], "description": "Alignment of the menu relative to the trigger." },
+        { "name": "gap", "type": "text", "default": "2", "description": "Spacing between trigger and menu (Tailwind spacing units)." }
+    ],
+    "slots": [
+        { "name": "trigger", "description": "The clickable element that opens the dropdown." },
+        { "name": "menu", "description": "Pre-styled menu container slot." }
+    ]
+}

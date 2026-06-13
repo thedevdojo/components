@@ -1,0 +1,14 @@
+{
+    "name": "toggle",
+    "label": "Toggle",
+    "description": "An animated switch control for boolean settings, with label, description, and three sizes. Works with wire:model.",
+    "category": "Forms",
+    "dependencies": [],
+    "props": [
+        { "name": "label", "type": "text", "default": null, "description": "Label text shown next to the toggle." },
+        { "name": "description", "type": "text", "default": null, "description": "Secondary helper text under the label." },
+        { "name": "checked", "type": "boolean", "default": false, "description": "Whether the toggle starts on." },
+        { "name": "disabled", "type": "boolean", "default": false, "description": "Disable the toggle." },
+        { "name": "size", "type": "select", "default": "md", "options": ["sm", "md", "lg"], "description": "The size of the switch." }
+    ]
+}

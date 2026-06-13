@@ -1,0 +1,13 @@
+{
+    "name": "alert",
+    "label": "Alert",
+    "description": "A contextual message box with six variants, built-in per-variant icons, title, and description.",
+    "category": "Feedback",
+    "dependencies": [],
+    "props": [
+        { "name": "variant", "type": "select", "default": "primary", "options": ["primary", "secondary", "destructive", "info", "success", "warning"], "description": "The color treatment of the alert." },
+        { "name": "icon", "type": "text", "default": null, "description": "Optional component name to render as a leading icon." },
+        { "name": "title", "type": "text", "default": "", "description": "Bold heading line." },
+        { "name": "description", "type": "text", "default": "", "description": "Body text (accepts HTML)." }
+    ]
+}

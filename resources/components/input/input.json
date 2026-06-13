@@ -1,0 +1,11 @@
+{
+    "name": "input",
+    "label": "Input",
+    "description": "A text input with an optional label and automatic validation error display for Livewire and request errors.",
+    "category": "Forms",
+    "dependencies": ["label"],
+    "props": [
+        { "name": "type", "type": "text", "default": "text", "description": "The native input type (text, email, password, number, etc.)." },
+        { "name": "label", "type": "text", "default": null, "description": "Optional label rendered above the input." }
+    ]
+}
