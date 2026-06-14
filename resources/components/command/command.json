@@ -1,0 +1,12 @@
+{
+    "name": "command",
+    "label": "Command Palette",
+    "description": "A ⌘K / Ctrl+K command palette with fuzzy search, grouped items, keyboard navigation and a teleported overlay. Selecting an item dispatches a command-select event.",
+    "category": "Overlays",
+    "dependencies": [],
+    "props": [
+        { "name": "items", "type": "array", "default": [], "description": "Array of { title, value, group?, icon? (SVG string), shortcut? } objects." },
+        { "name": "placeholder", "type": "text", "default": "Type a command or search…", "description": "Search input placeholder." }
+    ],
+    "usage": "Open with ⌘K/Ctrl+K, a click on the trigger, or by dispatching a window 'command-open' event. Provide a custom trigger via <x-slot:trigger>. Listen for the 'command-select' event to act on a choice."
+}

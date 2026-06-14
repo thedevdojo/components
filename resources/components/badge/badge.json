@@ -1,0 +1,14 @@
+{
+    "name": "badge",
+    "label": "Badge",
+    "description": "A small label for status, counts and categories. Solid, soft status and outline variants in three sizes, with an optional icon and pill shape.",
+    "category": "Display",
+    "dependencies": [],
+    "props": [
+        { "name": "variant", "type": "select", "default": "primary", "options": ["primary", "secondary", "outline", "destructive", "info", "success", "warning"], "description": "The color treatment of the badge." },
+        { "name": "size", "type": "select", "default": "sm", "options": ["sm", "md", "lg"], "description": "The size of the badge." },
+        { "name": "icon", "type": "text", "default": null, "description": "Optional component name to render as an icon (e.g. a Blade icon)." },
+        { "name": "iconPosition", "type": "select", "default": "before", "options": ["before", "after"], "description": "Render the icon before or after the label." },
+        { "name": "pill", "type": "boolean", "default": false, "description": "Use a fully rounded pill shape instead of the default rounded corners." }
+    ]
+}

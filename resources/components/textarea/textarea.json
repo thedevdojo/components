@@ -1,0 +1,11 @@
+{
+    "name": "textarea",
+    "label": "Textarea",
+    "description": "A multi-line text field with an optional label and automatic validation errors. Matches the input component's styling. Works with wire:model.",
+    "category": "Forms",
+    "dependencies": ["label"],
+    "props": [
+        { "name": "label", "type": "text", "default": null, "description": "Optional label rendered above the field." },
+        { "name": "rows", "type": "text", "default": "4", "description": "Initial visible number of text rows." }
+    ]
+}

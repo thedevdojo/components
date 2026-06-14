@@ -32,5 +32,5 @@ it('resolves dependencies before the component that needs them', function () {
 
 it('groups components by category in display order', function () {
     expect(Components::byCategory()->keys()->all())
-        ->toBe(['Forms', 'Layout', 'Overlays', 'Feedback', 'Editors']);
+        ->toBe(['Forms', 'Layout', 'Navigation', 'Display', 'Overlays', 'Feedback', 'Editors']);
 });

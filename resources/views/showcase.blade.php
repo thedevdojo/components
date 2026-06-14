@@ -153,6 +153,62 @@
                     <x-components.toggle label="Large switch" size="lg" checked />
                 </div>
             </x-devdojo-components::demo>
+
+            <x-devdojo-components::demo name="select" title="Select"
+                description="A styled native select with an optional label, placeholder and validation errors.">
+                <div class="grid w-full max-w-md gap-4">
+                    <x-components.select label="Country" placeholder="Choose a country">
+                        <option>United States</option>
+                        <option>United Kingdom</option>
+                        <option>Australia</option>
+                        <option>Canada</option>
+                    </x-components.select>
+                </div>
+            </x-devdojo-components::demo>
+
+            <x-devdojo-components::demo name="textarea" title="Textarea"
+                description="A multi-line field matching the input styling, with label and validation errors.">
+                <div class="grid w-full max-w-md gap-4">
+                    <x-components.textarea label="Message" placeholder="Write your message…" />
+                </div>
+            </x-devdojo-components::demo>
+
+            <x-devdojo-components::demo name="slider" title="Slider"
+                description="A range slider themed with your primary color, with an optional live value readout.">
+                <div class="grid w-full max-w-md gap-6">
+                    <x-components.slider label="Volume" :value="60" show-value />
+                    <x-components.slider :value="30" />
+                </div>
+            </x-devdojo-components::demo>
+
+            <x-devdojo-components::demo name="rating" title="Rating"
+                description="Interactive star rating with hover preview. Click the current value again to clear it.">
+                <div class="flex flex-col items-center gap-4">
+                    <x-components.rating :value="4" />
+                    <x-components.rating :value="3" size="lg" />
+                    <x-components.rating :value="5" size="sm" readonly />
+                </div>
+            </x-devdojo-components::demo>
+
+            <x-devdojo-components::demo name="date-picker" title="Date Picker"
+                description="A calendar bound to an input, with month navigation and several formats. The calendar teleports so it never clips.">
+                <div class="w-full max-w-xs">
+                    <x-components.date-picker label="Departure date" />
+                </div>
+            </x-devdojo-components::demo>
+
+            <x-devdojo-components::demo name="otp" title="OTP Input"
+                description="A segmented one-time-code input with auto-advance, backspace navigation and paste-to-fill.">
+                <x-components.otp :length="6" />
+            </x-devdojo-components::demo>
+
+            <x-devdojo-components::demo name="avatar-upload" title="Avatar Upload"
+                description="A circular picker with a built-in crop-and-resize modal. Click to choose a JPG or PNG.">
+                <div class="flex items-center gap-8">
+                    <x-components.avatar-upload :size="20" />
+                    <x-components.avatar-upload :size="20" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop&crop=faces" />
+                </div>
+            </x-devdojo-components::demo>
         </section>
 
         {{-- ============================ LAYOUT ============================ --}}
@@ -178,6 +234,204 @@
                         <p class="mt-1 text-foreground/70">No header or footer — just your content with comfortable padding.</p>
                     </x-components.card>
                 </div>
+            </x-devdojo-components::demo>
+
+            <x-devdojo-components::demo name="infinite-canvas" title="Infinite Canvas"
+                description="A pannable, zoomable surface with momentum. Scroll or trackpad to glide across it; drop any content in the middle.">
+                <div class="h-80 w-full overflow-hidden rounded-large border border-foreground/10 bg-card">
+                    <x-components.infinite-canvas :scale="100" dot-pattern>
+                        <div class="rounded-large border border-foreground/10 bg-background px-6 py-4 text-center shadow-xs">
+                            <p class="font-semibold text-foreground">Pan around me</p>
+                            <p class="mt-1 text-sm text-foreground/60">Scroll or trackpad to glide across the canvas.</p>
+                        </div>
+                    </x-components.infinite-canvas>
+                </div>
+            </x-devdojo-components::demo>
+
+            <x-devdojo-components::demo name="splitter" title="Splitter"
+                description="Resizable panes with a draggable gutter. Drag the seam to resize; lay panes out horizontally or vertically, and nest them.">
+                <x-components.splitter class="h-72 w-full overflow-hidden rounded-large border border-foreground/10" :min-size="80">
+                    <x-components.splitter.pane :size="35">
+                        <div class="flex h-full items-center justify-center bg-card p-6 text-center">
+                            <div>
+                                <p class="font-semibold text-foreground">Sidebar</p>
+                                <p class="mt-1 text-sm text-foreground/60">Drag the seam →</p>
+                            </div>
+                        </div>
+                    </x-components.splitter.pane>
+                    <x-components.splitter.pane :size="65">
+                        <x-components.splitter direction="vertical" :min-size="60">
+                            <x-components.splitter.pane>
+                                <div class="flex h-full items-center justify-center bg-background p-6 text-center text-sm text-foreground/70">Top panel</div>
+                            </x-components.splitter.pane>
+                            <x-components.splitter.pane>
+                                <div class="flex h-full items-center justify-center bg-background p-6 text-center text-sm text-foreground/70">Bottom panel</div>
+                            </x-components.splitter.pane>
+                        </x-components.splitter>
+                    </x-components.splitter.pane>
+                </x-components.splitter>
+            </x-devdojo-components::demo>
+
+            <x-devdojo-components::demo name="accordion" title="Accordion"
+                description="Stacked collapsible sections with a smooth, plugin-free height animation. Set exclusive to open one at a time.">
+                <div class="w-full max-w-xl rounded-large border border-foreground/10 bg-card px-4">
+                    <x-components.accordion exclusive>
+                        <x-components.accordion.item title="Is it accessible?" open>
+                            Yes. Each header is a real button and the panel is fully keyboard reachable.
+                        </x-components.accordion.item>
+                        <x-components.accordion.item title="Is it animated?">
+                            Yes — it animates with a CSS grid trick, so there's no Alpine plugin to install.
+                        </x-components.accordion.item>
+                        <x-components.accordion.item title="Can I customize it?">
+                            Absolutely. Every part is yours to edit once you publish the component.
+                        </x-components.accordion.item>
+                    </x-components.accordion>
+                </div>
+            </x-devdojo-components::demo>
+
+            <x-devdojo-components::demo name="tabs" title="Tabs"
+                description="A segmented control that switches between panels of content.">
+                <div class="w-full max-w-md">
+                    <x-components.tabs>
+                        <x-components.tabs.list>
+                            <x-components.tabs.tab tab="account">Account</x-components.tabs.tab>
+                            <x-components.tabs.tab tab="password">Password</x-components.tabs.tab>
+                            <x-components.tabs.tab tab="team">Team</x-components.tabs.tab>
+                        </x-components.tabs.list>
+                        <x-components.tabs.panel tab="account">
+                            <x-components.card><p class="text-sm text-foreground/70">Manage your account details and preferences here.</p></x-components.card>
+                        </x-components.tabs.panel>
+                        <x-components.tabs.panel tab="password">
+                            <x-components.card><p class="text-sm text-foreground/70">Change your password — you'll be signed out afterwards.</p></x-components.card>
+                        </x-components.tabs.panel>
+                        <x-components.tabs.panel tab="team">
+                            <x-components.card><p class="text-sm text-foreground/70">Invite teammates and manage their roles.</p></x-components.card>
+                        </x-components.tabs.panel>
+                    </x-components.tabs>
+                </div>
+            </x-devdojo-components::demo>
+
+            <x-devdojo-components::demo name="separator" title="Separator"
+                description="A thin divider — horizontal, vertical, or with a centered label.">
+                <div class="w-full max-w-md">
+                    <p class="text-sm text-foreground/70">Above the line</p>
+                    <x-components.separator class="my-4" />
+                    <div class="flex items-center text-sm text-foreground/70">
+                        <span>Profile</span>
+                        <x-components.separator vertical class="h-4" />
+                        <span>Settings</span>
+                        <x-components.separator vertical class="h-4" />
+                        <span>Logout</span>
+                    </div>
+                    <x-components.separator label="OR" class="my-4" />
+                    <p class="text-sm text-foreground/70">Below the labeled divider</p>
+                </div>
+            </x-devdojo-components::demo>
+        </section>
+
+        {{-- ============================ NAVIGATION ============================ --}}
+        <section id="navigation" class="scroll-mt-32 space-y-8">
+            <x-devdojo-components::section title="Navigation" subtitle="Help people find their way around." />
+
+            <x-devdojo-components::demo name="breadcrumbs" title="Breadcrumbs"
+                description="A navigation trail to the current page, with chevron separators added automatically.">
+                <x-components.breadcrumbs>
+                    <x-components.breadcrumbs.item href="#">Home</x-components.breadcrumbs.item>
+                    <x-components.breadcrumbs.item href="#">Projects</x-components.breadcrumbs.item>
+                    <x-components.breadcrumbs.item href="#">Atlas</x-components.breadcrumbs.item>
+                    <x-components.breadcrumbs.item current>Settings</x-components.breadcrumbs.item>
+                </x-components.breadcrumbs>
+            </x-devdojo-components::demo>
+
+            <x-devdojo-components::demo name="pagination" title="Pagination"
+                description="Page navigation with previous/next controls and a windowed list of page numbers.">
+                <x-components.pagination :current-page="4" :total-pages="10" base-url="" />
+            </x-devdojo-components::demo>
+        </section>
+
+        {{-- ============================ DISPLAY ============================ --}}
+        <section id="display" class="scroll-mt-32 space-y-8">
+            <x-devdojo-components::section title="Display" subtitle="Compact elements that label and categorize." />
+
+            <x-devdojo-components::demo name="badge" title="Badge"
+                description="Status, count and category labels. Solid, soft and outline variants, three sizes, optional icon and pill shape.">
+                <div class="flex flex-col items-center gap-5">
+                    <div class="flex flex-wrap items-center justify-center gap-2">
+                        <x-components.badge>Primary</x-components.badge>
+                        <x-components.badge variant="secondary">Secondary</x-components.badge>
+                        <x-components.badge variant="outline">Outline</x-components.badge>
+                        <x-components.badge variant="success">Success</x-components.badge>
+                        <x-components.badge variant="info">Info</x-components.badge>
+                        <x-components.badge variant="warning">Warning</x-components.badge>
+                        <x-components.badge variant="destructive">Destructive</x-components.badge>
+                    </div>
+                    <div class="flex flex-wrap items-center justify-center gap-2">
+                        <x-components.badge size="sm">Small</x-components.badge>
+                        <x-components.badge size="md">Medium</x-components.badge>
+                        <x-components.badge size="lg">Large</x-components.badge>
+                        <x-components.badge variant="success" pill>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg>
+                            Verified
+                        </x-components.badge>
+                        <x-components.badge variant="secondary" pill>
+                            <span class="size-1.5 rounded-full bg-green-500"></span>
+                            Online
+                        </x-components.badge>
+                    </div>
+                </div>
+            </x-devdojo-components::demo>
+
+            <x-devdojo-components::demo name="avatar" title="Avatar"
+                description="Photo, auto-generated initials or an icon fallback. Five sizes, circle or square, status dots and deterministic colors.">
+                <div class="flex flex-col items-center gap-6">
+                    <div class="flex flex-wrap items-center justify-center gap-4">
+                        <x-components.avatar size="xs" name="Tony Lea" circle />
+                        <x-components.avatar size="sm" name="Ada Lovelace" color="auto" circle />
+                        <x-components.avatar size="md" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&h=120&fit=crop&crop=faces" circle status="online" />
+                        <x-components.avatar size="lg" name="Grace Hopper" color="auto" />
+                        <x-components.avatar size="xl" circle status="busy" />
+                    </div>
+                    <div class="flex flex-wrap items-center justify-center gap-3">
+                        <x-components.avatar name="Blue" color="blue" circle />
+                        <x-components.avatar name="Green" color="green" circle />
+                        <x-components.avatar name="Amber" color="amber" circle />
+                        <x-components.avatar name="Rose" color="rose" circle />
+                        <x-components.avatar name="Violet" color="violet" circle />
+                    </div>
+                </div>
+            </x-devdojo-components::demo>
+
+            <x-devdojo-components::demo name="table" title="Table"
+                description="A styled, horizontally scrollable data table composed from header and row sub-components.">
+                <x-components.table>
+                    <x-components.table.columns>
+                        <x-components.table.column>Name</x-components.table.column>
+                        <x-components.table.column>Role</x-components.table.column>
+                        <x-components.table.column>Status</x-components.table.column>
+                    </x-components.table.columns>
+                    <x-components.table.row>
+                        <x-components.table.cell class="font-medium text-foreground">Tony Lea</x-components.table.cell>
+                        <x-components.table.cell>Founder</x-components.table.cell>
+                        <x-components.table.cell><x-components.badge variant="success" size="sm">Active</x-components.badge></x-components.table.cell>
+                    </x-components.table.row>
+                    <x-components.table.row>
+                        <x-components.table.cell class="font-medium text-foreground">Ada Lovelace</x-components.table.cell>
+                        <x-components.table.cell>Engineer</x-components.table.cell>
+                        <x-components.table.cell><x-components.badge variant="secondary" size="sm">Invited</x-components.badge></x-components.table.cell>
+                    </x-components.table.row>
+                    <x-components.table.row>
+                        <x-components.table.cell class="font-medium text-foreground">Grace Hopper</x-components.table.cell>
+                        <x-components.table.cell>Advisor</x-components.table.cell>
+                        <x-components.table.cell><x-components.badge variant="warning" size="sm">Away</x-components.badge></x-components.table.cell>
+                    </x-components.table.row>
+                </x-components.table>
+            </x-devdojo-components::demo>
+
+            <x-devdojo-components::demo name="empty-state" title="Empty State"
+                description="A friendly placeholder for when there's nothing to show yet.">
+                <x-components.empty-state title="No projects yet" description="Create your first project to get started — it only takes a minute.">
+                    <x-components.button size="sm">New project</x-components.button>
+                </x-components.empty-state>
             </x-devdojo-components::demo>
         </section>
 
@@ -293,6 +547,21 @@
                     </x-components.drawer>
                 </div>
             </x-devdojo-components::demo>
+
+            @php
+                $commandItems = [
+                    ['group' => 'Suggestions', 'title' => 'Calendar', 'value' => 'calendar', 'icon' => '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>'],
+                    ['group' => 'Suggestions', 'title' => 'Search Docs', 'value' => 'docs', 'icon' => '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>'],
+                    ['group' => 'Settings', 'title' => 'Profile', 'value' => 'profile', 'shortcut' => '⌘P', 'icon' => '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>'],
+                    ['group' => 'Settings', 'title' => 'Billing', 'value' => 'billing', 'shortcut' => '⌘B', 'icon' => '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>'],
+                    ['group' => 'Settings', 'title' => 'Settings', 'value' => 'settings', 'shortcut' => '⌘S', 'icon' => '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>'],
+                ];
+            @endphp
+
+            <x-devdojo-components::demo name="command" title="Command Palette"
+                description="A ⌘K command palette with search, grouped items and full keyboard navigation. Press ⌘K or click the trigger.">
+                <x-components.command :items="$commandItems" />
+            </x-devdojo-components::demo>
         </section>
 
         {{-- ============================ FEEDBACK ============================ --}}
@@ -318,6 +587,26 @@
                     <x-components.button variant="outline" x-on:click="window.toast('Something went wrong', 'error', 'Please try again later.')">Error</x-components.button>
                     <x-components.button variant="outline" x-on:click="window.toast('Heads up', 'warning')">Warning</x-components.button>
                     <x-components.button variant="outline" x-on:click="window.toast('New update available', 'info')">Info</x-components.button>
+                </div>
+            </x-devdojo-components::demo>
+
+            <x-devdojo-components::demo name="progress" title="Progress"
+                description="A completion bar in three sizes, plus an indeterminate state for unknown-duration work.">
+                <div class="grid w-full max-w-md gap-5">
+                    <x-components.progress :value="25" size="sm" />
+                    <x-components.progress :value="60" />
+                    <x-components.progress :value="90" size="lg" />
+                    <x-components.progress indeterminate />
+                </div>
+            </x-devdojo-components::demo>
+
+            <x-devdojo-components::demo name="skeleton" title="Skeleton"
+                description="Pulsing placeholders for content that's still loading.">
+                <div class="flex w-full max-w-md items-center gap-4">
+                    <x-components.skeleton circle class="size-12 shrink-0" />
+                    <div class="flex-1">
+                        <x-components.skeleton :lines="3" />
+                    </div>
                 </div>
             </x-devdojo-components::demo>
         </section>

@@ -1,0 +1,11 @@
+{
+    "name": "tabs",
+    "label": "Tabs",
+    "description": "A segmented tab control for switching between panels of content. Compose with <x-tabs.list>, <x-tabs.tab> and <x-tabs.panel>.",
+    "category": "Layout",
+    "dependencies": [],
+    "props": [
+        { "name": "default", "type": "text", "default": null, "description": "The tab key to select initially. Defaults to the first tab." }
+    ],
+    "usage": "Match each <x-tabs.tab tab=\"key\"> to an <x-tabs.panel tab=\"key\">. The first tab is selected automatically."
+}

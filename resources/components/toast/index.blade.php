@@ -53,13 +53,13 @@
                     if (toast.rafId) cancelAnimationFrame(toast.rafId);
                     const toastToRemoveEl = document.getElementById('dd-toast-' + id);
                     if (toastToRemoveEl) {
-                        toastToRemoveEl.classList.remove('translate-y-0', 'opacity-100');
-                        toastToRemoveEl.classList.add('-translate-y-full', 'opacity-0');
+                        toastToRemoveEl.classList.remove('translate-y-0', 'scale-100', 'opacity-100');
+                        toastToRemoveEl.classList.add('-translate-y-4', 'scale-95', 'opacity-0');
                     }
                     setTimeout(() => {
                         this.toasts = this.toasts.filter(toast => toast.id !== id);
                         delete this.toastsProgress[id];
-                    }, 1000);
+                    }, 350);
                 }
             },
             types: {
@@ -93,9 +93,13 @@
         <div class="mt-1 space-y-1 sm:mt-2 sm:space-y-2">
             <template x-for="toast in toasts" :key="toast.id">
                 <div :id="'dd-toast-' + toast.id" x-data
+                    x-init="requestAnimationFrame(() => requestAnimationFrame(() => {
+                        $el.classList.remove('-translate-y-4', 'scale-95', 'opacity-0');
+                        $el.classList.add('translate-y-0', 'scale-100', 'opacity-100');
+                    }))"
                     @mouseenter="if (!isTouchDevice) pauseToast(toast.id)"
                     @mouseleave="if (!isTouchDevice) resumeToast(toast.id)"
-                    class="group pointer-events-auto relative left-1/2 top-0 flex w-full -translate-x-1/2 translate-y-0 flex-col items-start overflow-hidden rounded-medium bg-black/70 p-3.5 px-5 text-sm text-white opacity-100 backdrop-blur-md duration-300 ease-out sm:max-w-sm sm:rounded-large dark:border dark:border-white/10"
+                    class="group pointer-events-auto relative left-1/2 top-0 flex w-full -translate-x-1/2 -translate-y-4 scale-95 flex-col items-start overflow-hidden rounded-medium bg-black/70 p-3.5 px-5 text-sm text-white opacity-0 backdrop-blur-md transition duration-300 ease-out sm:max-w-sm sm:rounded-large dark:border dark:border-white/10"
                     role="alert">
                     <div class="absolute inset-0 z-10 h-full bg-white/10 duration-300 ease-linear"
                         :style="`width: ${toastsProgress[toast.id]}%;`"></div>

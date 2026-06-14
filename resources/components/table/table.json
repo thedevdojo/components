@@ -1,0 +1,9 @@
+{
+    "name": "table",
+    "label": "Table",
+    "description": "A styled, horizontally scrollable data table. Compose with <x-table.columns> + <x-table.column> for the header and <x-table.row> + <x-table.cell> for the body.",
+    "category": "Display",
+    "dependencies": [],
+    "props": [],
+    "usage": "Wrap header cells in <x-table.columns>; each data row is an <x-table.row> of <x-table.cell> elements."
+}

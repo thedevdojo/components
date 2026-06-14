@@ -1,0 +1,13 @@
+{
+    "name": "splitter",
+    "label": "Splitter",
+    "description": "A draggable split layout with resizable panes. Lay panes out horizontally or vertically with a slim, grabbable gutter between them. Nest splitters for complex layouts.",
+    "category": "Layout",
+    "dependencies": [],
+    "props": [
+        { "name": "direction", "type": "select", "default": "horizontal", "options": ["horizontal", "vertical"], "description": "Lay panes side by side (horizontal) or stacked (vertical)." },
+        { "name": "gutterSize", "type": "text", "default": "8", "description": "Thickness of the draggable gutter in pixels." },
+        { "name": "minSize", "type": "text", "default": "100", "description": "Minimum size (px) each pane can shrink to." }
+    ],
+    "usage": "Loads Split.js from a CDN automatically. Compose with <x-splitter.pane> children and give each an optional size to set its initial percentage."
+}

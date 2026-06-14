@@ -1,0 +1,13 @@
+{
+    "name": "infinite-canvas",
+    "label": "Infinite Canvas",
+    "description": "A pannable, zoomable infinite surface. Scroll or trackpad to glide with momentum, dispatch events to zoom or recenter, and drop any content in the middle. Optional dotted background.",
+    "category": "Layout",
+    "dependencies": [],
+    "props": [
+        { "name": "scale", "type": "text", "default": "100", "description": "Initial zoom as a percentage (100 = 1×)." },
+        { "name": "dotPattern", "type": "boolean", "default": false, "description": "Show a themed dotted-grid background." },
+        { "name": "centerCanvasOnResize", "type": "boolean", "default": false, "description": "Re-center the viewport whenever the window resizes." }
+    ],
+    "usage": "Zoom and recenter from anywhere by dispatching window events: canvas-zoom-in, canvas-zoom-out, canvas-center, and canvas-position ({ x, y })."
+}

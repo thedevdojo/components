@@ -107,7 +107,7 @@ class Components
      */
     public static function byCategory(): Collection
     {
-        $order = ['Forms', 'Layout', 'Overlays', 'Feedback', 'Editors'];
+        $order = ['Forms', 'Layout', 'Navigation', 'Display', 'Overlays', 'Feedback', 'Editors'];
 
         return collect(static::all())
             ->groupBy('category')

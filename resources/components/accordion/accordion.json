@@ -1,0 +1,11 @@
+{
+    "name": "accordion",
+    "label": "Accordion",
+    "description": "A set of stacked, collapsible sections. Expand any number of items, or set `exclusive` to keep only one open. Pairs with <x-accordion.item>.",
+    "category": "Layout",
+    "dependencies": [],
+    "props": [
+        { "name": "exclusive", "type": "boolean", "default": false, "description": "Allow only one item to be open at a time." }
+    ],
+    "usage": "Compose with <x-accordion.item title=\"...\"> children; add `open` to start an item expanded, or pass a custom `icon`."
+}
