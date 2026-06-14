@@ -5,10 +5,12 @@ namespace DevDojo\Components;
 use DevDojo\Components\Console\AddCommand;
 use DevDojo\Components\Console\InstallCommand;
 use DevDojo\Components\Console\ListCommand;
+use DevDojo\Components\Livewire\ComponentCard;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\View\ComponentAttributeBag;
+use Livewire\Livewire;
 
 class ComponentsServiceProvider extends ServiceProvider
 {
@@ -27,6 +29,7 @@ class ComponentsServiceProvider extends ServiceProvider
     {
         $this->registerTailwindMergeFallbacks();
         $this->registerPreviewComponents();
+        $this->registerLivewireComponents();
         $this->registerShowcase();
         $this->registerPublishing();
 
@@ -54,6 +57,19 @@ class ComponentsServiceProvider extends ServiceProvider
         }
 
         Blade::anonymousComponentPath(dirname(Components::sourcePath()), Components::NAMESPACE);
+    }
+
+    /**
+     * Register the Livewire components used by the showcase gallery — only when
+     * Livewire is installed, so the core package stays Livewire-free.
+     */
+    protected function registerLivewireComponents(): void
+    {
+        if (! class_exists(Livewire::class)) {
+            return;
+        }
+
+        Livewire::component('devdojo-components.card', ComponentCard::class);
     }
 
     /**

@@ -20,9 +20,15 @@
 
     @vite(['resources/css/app.css'])
 
-    {{-- Alpine + the focus plugin (powers the overlay components). --}}
-    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/focus@3.x.x/dist/cdn.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    @if (class_exists(\Livewire\Livewire::class))
+        {{-- Livewire ships Alpine (with the focus & collapse plugins) and powers
+             the "add" buttons that publish components into the host app. --}}
+        @livewireStyles
+    @else
+        {{-- No Livewire installed: load Alpine + the focus plugin from a CDN. --}}
+        <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/focus@3.x.x/dist/cdn.min.js"></script>
+        <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    @endif
 </head>
 
 <body class="bg-background text-foreground antialiased"
@@ -641,6 +647,10 @@ console.log(greet(\'DevDojo\'));'" />
         Built with care by <a href="https://devdojo.com" class="font-medium text-foreground/70 underline-offset-4 hover:underline">DevDojo</a>.
         Add any component with <code class="rounded bg-secondary px-1.5 py-0.5 font-mono text-xs text-foreground/80">php artisan components:add</code>
     </footer>
+
+    @if (class_exists(\Livewire\Livewire::class))
+        @livewireScripts
+    @endif
 </body>
 
 </html>

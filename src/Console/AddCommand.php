@@ -3,8 +3,8 @@
 namespace DevDojo\Components\Console;
 
 use DevDojo\Components\Components;
+use DevDojo\Components\Publisher;
 use Illuminate\Console\Command;
-use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Str;
 
 use function Laravel\Prompts\multiselect;
@@ -24,7 +24,7 @@ class AddCommand extends Command
      */
     protected $description = 'Add DevDojo components to your application';
 
-    public function __construct(protected Filesystem $files)
+    public function __construct(protected Publisher $publisher)
     {
         parent::__construct();
     }
@@ -109,10 +109,9 @@ class AddCommand extends Command
      */
     protected function addComponent(string $name): string
     {
-        $sourceDir = Components::sourcePath($name);
-        $destinationDir = $this->destinationDir($name);
+        $result = $this->publisher->publish($name, (bool) $this->option('force'));
 
-        if ($this->files->isDirectory($destinationDir) && ! $this->option('force')) {
+        if ($result === 'skipped') {
             $this->components->twoColumnDetail(
                 "<fg=yellow>$name</>",
                 '<fg=yellow>exists, skipped (use --force)</>'
@@ -121,51 +120,12 @@ class AddCommand extends Command
             return 'skipped';
         }
 
-        foreach ($this->files->allFiles($sourceDir) as $file) {
-            // Metadata is for the package's registry, not the host app.
-            if ($file->getExtension() === 'json') {
-                continue;
-            }
-
-            $target = $destinationDir.'/'.$file->getRelativePathname();
-            $this->files->ensureDirectoryExists(dirname($target));
-
-            $contents = $this->files->get($file->getPathname());
-
-            if (str_ends_with($file->getFilename(), '.blade.php')) {
-                $contents = $this->transform($contents);
-            }
-
-            $this->files->put($target, $contents);
-        }
-
         $this->components->twoColumnDetail(
             "<fg=green>$name</>",
-            '<fg=gray>'.$this->relativePath($destinationDir).'/</>'
+            '<fg=gray>'.$this->relativePath($this->publisher->destinationDir($name)).'/</>'
         );
 
         return 'added';
-    }
-
-    /**
-     * Rewrite the preview namespace references to root anonymous components,
-     * e.g. <x-components.button /> becomes <x-button /> and a dynamic
-     * component="components.tiptap.icons.bold" becomes "tiptap.icons.bold".
-     */
-    protected function transform(string $contents): string
-    {
-        $namespace = Components::NAMESPACE;
-
-        return str_replace(
-            ["<x-{$namespace}.", "</x-{$namespace}.", "component=\"{$namespace}.", "component='{$namespace}."],
-            ['<x-', '</x-', 'component="', "component='"],
-            $contents
-        );
-    }
-
-    protected function destinationDir(string $name): string
-    {
-        return resource_path(trim((string) config('components.path', 'views/components'), '/')."/{$name}");
     }
 
     protected function relativePath(string $path): string

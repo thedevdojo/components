@@ -27,5 +27,7 @@ class TestCase extends Orchestra
     {
         $app['env'] = 'local';
         $app['config']->set('app.env', 'local');
+        // Livewire signs its snapshots with the app key when components render.
+        $app['config']->set('app.key', 'base64:'.base64_encode(str_repeat('a', 32)));
     }
 }
