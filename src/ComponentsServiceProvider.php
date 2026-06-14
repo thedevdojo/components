@@ -83,11 +83,14 @@ class ComponentsServiceProvider extends ServiceProvider
             return;
         }
 
-        Route::get(config('components.showcase.route', '/components'), function () {
-            return view('devdojo-components::showcase', [
-                'categories' => Components::byCategory(),
-            ]);
-        })->name('devdojo-components.showcase');
+        // The showcase needs the session + CSRF stack (the "web" group) so the
+        // Livewire "add" buttons can post back without a 419 "page expired".
+        Route::middleware(config('components.showcase.middleware', ['web']))
+            ->get(config('components.showcase.route', '/components'), function () {
+                return view('devdojo-components::showcase', [
+                    'categories' => Components::byCategory(),
+                ]);
+            })->name('devdojo-components.showcase');
     }
 
     /**

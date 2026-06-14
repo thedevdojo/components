@@ -32,72 +32,113 @@
 </head>
 
 <body class="bg-background text-foreground antialiased"
-    x-data="{ dark: document.documentElement.classList.contains('dark'),
+    x-data="{
+        dark: document.documentElement.classList.contains('dark'),
+        active: '',
         toggle() {
             this.dark = !this.dark;
             document.documentElement.classList.toggle('dark', this.dark);
             localStorage.setItem('dd-theme', this.dark ? 'dark' : 'light');
-        } }">
+        },
+        initSpy() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) { this.active = entry.target.id; }
+                });
+            }, { rootMargin: '-15% 0px -75% 0px', threshold: 0 });
+            document.querySelectorAll('main section[id]').forEach((s) => observer.observe(s));
+        }
+    }"
+    x-init="initSpy()">
 
     {{-- Toast container (single instance for the whole page). --}}
     <x-components.toast />
 
-    {{-- Header --}}
-    <header class="sticky top-0 z-40 border-b border-foreground/10 bg-background/80 backdrop-blur-md">
-        <div class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-            <div class="flex items-center gap-2.5">
-                <span class="flex h-8 w-8 items-center justify-center rounded-medium bg-primary text-primary-foreground shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.3)]">
-                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m7 11 2-2-2-2" /><path d="M11 13h4" /><rect x="3" y="3" width="18" height="18" rx="2" /></svg>
-                </span>
-                <div class="leading-tight">
-                    <p class="text-sm font-semibold">DevDojo <span class="text-foreground/50">Components</span></p>
-                </div>
-            </div>
-
-            <div class="flex items-center gap-2">
-                <a href="https://devdojo.com" target="_blank" class="hidden text-sm text-foreground/60 transition hover:text-foreground sm:inline-flex">devdojo.com</a>
-                <button @click="toggle()" type="button" aria-label="Toggle theme"
-                    class="inline-flex h-9 w-9 items-center justify-center rounded-md border border-foreground/10 bg-background text-foreground/70 transition hover:bg-secondary hover:text-foreground">
-                    <svg x-show="!dark" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" /></svg>
-                    <svg x-show="dark" x-cloak class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" /></svg>
-                </button>
-            </div>
+    {{-- Mobile top bar — the desktop layout uses the left/right sidebars instead. --}}
+    <div class="sticky top-0 z-40 flex items-center justify-between gap-3 border-b border-foreground/10 bg-background/80 px-4 py-3 backdrop-blur-md lg:hidden">
+        <div class="flex items-center gap-2.5">
+            <span class="flex h-7 w-7 items-center justify-center rounded-medium bg-primary text-primary-foreground shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.3)]">
+                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m7 11 2-2-2-2" /><path d="M11 13h4" /><rect x="3" y="3" width="18" height="18" rx="2" /></svg>
+            </span>
+            <p class="text-sm font-semibold">Components</p>
         </div>
-    </header>
+        <button @click="toggle()" type="button" aria-label="Toggle theme"
+            class="inline-flex h-9 w-9 items-center justify-center rounded-medium border border-foreground/10 bg-card text-foreground/70 transition hover:bg-secondary hover:text-foreground">
+            <svg x-show="!dark" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" /></svg>
+            <svg x-show="dark" x-cloak class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" /></svg>
+        </button>
+    </div>
 
-    {{-- Hero --}}
-    <section class="mx-auto max-w-6xl px-6 pt-16 pb-10 text-center">
-        <span class="inline-flex items-center gap-1.5 rounded-full border border-foreground/10 bg-secondary px-3 py-1 text-xs font-medium text-foreground/70">
-            <span class="h-1.5 w-1.5 rounded-full bg-green-500"></span>
-            {{ count($categories->flatten(1)) }} components ready to add
-        </span>
-        <h1 class="mx-auto mt-6 max-w-2xl text-balance text-4xl font-semibold tracking-tight sm:text-5xl">
-            Blade components you'll actually want to ship.
-        </h1>
-        <p class="mx-auto mt-4 max-w-xl text-balance text-base text-foreground/60">
-            Browse the collection below, then add the ones you need straight into your app.
-            They become <span class="font-medium text-foreground">your</span> code — edit freely.
-        </p>
-
-        <div class="mx-auto mt-7 flex max-w-md items-center justify-center gap-2 rounded-medium border border-foreground/10 bg-card px-4 py-2.5 font-mono text-sm shadow-xs">
-            <span class="text-foreground/40 select-none">$</span>
-            <span class="text-foreground/90">php artisan components:add</span>
-        </div>
-    </section>
-
-    {{-- Category navigation --}}
-    <nav class="sticky top-[65px] z-30 border-y border-foreground/10 bg-background/80 backdrop-blur-md">
-        <div class="mx-auto flex max-w-6xl items-center gap-1 overflow-x-auto px-6 py-3">
+    {{-- Mobile category scroller. --}}
+    <nav class="sticky top-[57px] z-30 border-b border-foreground/10 bg-background/80 backdrop-blur-md lg:hidden">
+        <div class="flex items-center gap-1 overflow-x-auto px-4 py-2.5">
             @foreach ($categories as $category => $components)
-                <a href="#{{ Str::slug($category) }}" class="whitespace-nowrap rounded-md px-3 py-1.5 text-sm text-foreground/60 transition hover:bg-secondary hover:text-foreground">{{ $category }}</a>
+                @php $slug = Str::slug($category); @endphp
+                <a href="#{{ $slug }}" @click="active = '{{ $slug }}'"
+                    :class="active === '{{ $slug }}' ? 'bg-secondary text-foreground' : 'text-foreground/60 hover:text-foreground'"
+                    class="whitespace-nowrap rounded-medium px-3 py-1.5 text-sm font-medium transition">{{ $category }}</a>
             @endforeach
         </div>
     </nav>
 
-    <main class="mx-auto max-w-6xl space-y-20 px-6 py-16">
+    <div class="mx-auto flex w-full max-w-[88rem] gap-8 px-4 sm:px-6 lg:gap-10 lg:px-8">
+
+        {{-- ===================== LEFT SIDEBAR ===================== --}}
+        <aside class="sticky top-0 hidden h-screen w-60 shrink-0 flex-col overflow-y-auto pt-10 pb-8 lg:flex">
+            <div class="flex items-center gap-2.5 px-2.5">
+                <span class="flex h-8 w-8 items-center justify-center rounded-medium bg-primary text-primary-foreground shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.3)]">
+                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m7 11 2-2-2-2" /><path d="M11 13h4" /><rect x="3" y="3" width="18" height="18" rx="2" /></svg>
+                </span>
+                <p class="text-sm font-semibold tracking-tight">Components</p>
+            </div>
+
+            <p class="mt-8 px-2.5 text-[0.7rem] font-medium uppercase tracking-wider text-foreground/40">Categories</p>
+            <nav class="mt-2 flex flex-col gap-0.5">
+                @foreach ($categories as $category => $components)
+                    @php $slug = Str::slug($category); @endphp
+                    <a href="#{{ $slug }}" @click="active = '{{ $slug }}'"
+                        :class="active === '{{ $slug }}' ? 'bg-secondary text-foreground' : 'text-foreground/60 hover:bg-secondary/60 hover:text-foreground'"
+                        class="group flex items-center justify-between rounded-medium px-2.5 py-1.5 text-sm font-medium transition">
+                        <span>{{ $category }}</span>
+                        <span :class="active === '{{ $slug }}' ? 'text-foreground/45' : 'text-foreground/25'" class="font-mono text-xs tabular-nums transition">{{ count($components) }}</span>
+                    </a>
+                @endforeach
+            </nav>
+
+            <a href="https://devdojo.com" target="_blank" rel="noreferrer"
+                class="mt-auto flex items-center gap-1.5 px-2.5 pt-8 text-sm text-foreground/50 transition hover:text-foreground">
+                devdojo.com
+                <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10" /><path d="M7 17 17 7" /></svg>
+            </a>
+        </aside>
+
+        {{-- ===================== MAIN CONTENT ===================== --}}
+        <main class="min-w-0 flex-1 py-10 lg:py-14">
+
+            {{-- Intro --}}
+            <div class="border-b border-foreground/10 pb-10">
+                <span class="inline-flex items-center gap-1.5 rounded-full border border-foreground/10 bg-secondary px-3 py-1 text-xs font-medium text-foreground/70">
+                    <span class="h-1.5 w-1.5 rounded-full bg-green-500"></span>
+                    {{ count($categories->flatten(1)) }} components ready to add
+                </span>
+                <h1 class="mt-5 max-w-2xl text-balance text-3xl font-semibold tracking-tight sm:text-4xl">
+                    Blade components you'll actually want to ship.
+                </h1>
+                <p class="mt-3 max-w-xl text-balance text-base text-foreground/60">
+                    Browse the collection below, then add the ones you need straight into your app.
+                    They become <span class="font-medium text-foreground">your</span> code — edit freely.
+                </p>
+
+                <div class="mt-6 inline-flex items-center gap-2 rounded-medium border border-foreground/10 bg-card px-4 py-2.5 font-mono text-sm shadow-xs">
+                    <span class="text-foreground/40 select-none">$</span>
+                    <span class="text-foreground/90">php artisan components:add</span>
+                </div>
+            </div>
+
+            <div class="mt-14 space-y-20">
 
         {{-- ============================ FORMS ============================ --}}
-        <section id="forms" class="scroll-mt-32 space-y-8">
+        <section id="forms" class="scroll-mt-28 lg:scroll-mt-10 space-y-8">
             <x-devdojo-components::section title="Forms" subtitle="The building blocks of every interface." />
 
             <x-devdojo-components::demo name="button" title="Button"
@@ -218,7 +259,7 @@
         </section>
 
         {{-- ============================ LAYOUT ============================ --}}
-        <section id="layout" class="scroll-mt-32 space-y-8">
+        <section id="layout" class="scroll-mt-28 lg:scroll-mt-10 space-y-8">
             <x-devdojo-components::section title="Layout" subtitle="Containers that bring structure to your pages." />
 
             <x-devdojo-components::demo name="card" title="Card"
@@ -336,7 +377,7 @@
         </section>
 
         {{-- ============================ NAVIGATION ============================ --}}
-        <section id="navigation" class="scroll-mt-32 space-y-8">
+        <section id="navigation" class="scroll-mt-28 lg:scroll-mt-10 space-y-8">
             <x-devdojo-components::section title="Navigation" subtitle="Help people find their way around." />
 
             <x-devdojo-components::demo name="breadcrumbs" title="Breadcrumbs"
@@ -356,7 +397,7 @@
         </section>
 
         {{-- ============================ DISPLAY ============================ --}}
-        <section id="display" class="scroll-mt-32 space-y-8">
+        <section id="display" class="scroll-mt-28 lg:scroll-mt-10 space-y-8">
             <x-devdojo-components::section title="Display" subtitle="Compact elements that label and categorize." />
 
             <x-devdojo-components::demo name="badge" title="Badge"
@@ -442,7 +483,7 @@
         </section>
 
         {{-- ============================ OVERLAYS ============================ --}}
-        <section id="overlays" class="scroll-mt-32 space-y-8">
+        <section id="overlays" class="scroll-mt-28 lg:scroll-mt-10 space-y-8">
             <x-devdojo-components::section title="Overlays" subtitle="Floating UI that appears on demand." />
 
             <x-devdojo-components::demo name="modal" title="Modal"
@@ -571,7 +612,7 @@
         </section>
 
         {{-- ============================ FEEDBACK ============================ --}}
-        <section id="feedback" class="scroll-mt-32 space-y-8">
+        <section id="feedback" class="scroll-mt-28 lg:scroll-mt-10 space-y-8">
             <x-devdojo-components::section title="Feedback" subtitle="Tell users what just happened." />
 
             <x-devdojo-components::demo name="alert" title="Alert"
@@ -618,7 +659,7 @@
         </section>
 
         {{-- ============================ EDITORS ============================ --}}
-        <section id="editors" class="scroll-mt-32 space-y-8">
+        <section id="editors" class="scroll-mt-28 lg:scroll-mt-10 space-y-8">
             <x-devdojo-components::section title="Editors" subtitle="Powerful editing surfaces that lazy-load on demand." />
 
             <x-devdojo-components::demo name="monaco-editor" title="Monaco Editor"
@@ -641,12 +682,41 @@ console.log(greet(\'DevDojo\'));'" />
             </x-devdojo-components::demo>
         </section>
 
-    </main>
+            </div>
 
-    <footer class="border-t border-foreground/10 py-10 text-center text-sm text-foreground/50">
-        Built with care by <a href="https://devdojo.com" class="font-medium text-foreground/70 underline-offset-4 hover:underline">DevDojo</a>.
-        Add any component with <code class="rounded bg-secondary px-1.5 py-0.5 font-mono text-xs text-foreground/80">php artisan components:add</code>
-    </footer>
+            <footer class="mt-20 border-t border-foreground/10 pt-8 text-sm text-foreground/50">
+                Built with care by <a href="https://devdojo.com" class="font-medium text-foreground/70 underline-offset-4 hover:underline">DevDojo</a>.
+                Add any component with <code class="rounded-small bg-secondary px-1.5 py-0.5 font-mono text-xs text-foreground/80">php artisan components:add</code>
+            </footer>
+        </main>
+
+        {{-- ===================== RIGHT SIDEBAR ===================== --}}
+        <aside class="sticky top-0 hidden h-screen w-80 shrink-0 flex-col gap-5 pt-10 lg:pt-14 xl:flex">
+            <div class="flex justify-end">
+                <button @click="toggle()" type="button" aria-label="Toggle theme"
+                    class="inline-flex h-9 w-9 items-center justify-center rounded-medium border border-foreground/10 bg-card text-foreground/70 shadow-xs transition hover:bg-secondary hover:text-foreground">
+                    <svg x-show="!dark" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" /></svg>
+                    <svg x-show="dark" x-cloak class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" /></svg>
+                </button>
+            </div>
+
+            {{-- GitHub call-to-action. --}}
+            <div class="rounded-large border border-foreground/10 bg-card p-5 shadow-xs">
+                <div class="flex h-10 w-10 items-center justify-center rounded-medium bg-secondary text-foreground">
+                    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.37.5 0 5.78 0 12.29c0 5.2 3.44 9.6 8.21 11.16.6.11.82-.25.82-.56 0-.28-.01-1.02-.02-2-3.34.71-4.04-1.58-4.04-1.58-.55-1.36-1.33-1.73-1.33-1.73-1.09-.73.08-.71.08-.71 1.2.08 1.84 1.21 1.84 1.21 1.07 1.79 2.81 1.27 3.49.97.11-.76.42-1.27.76-1.56-2.67-.3-5.47-1.31-5.47-5.83 0-1.29.47-2.34 1.24-3.17-.12-.3-.54-1.52.12-3.16 0 0 1.01-.32 3.3 1.21.96-.26 1.98-.39 3-.4 1.02.01 2.04.14 3 .4 2.29-1.53 3.3-1.21 3.3-1.21.66 1.64.24 2.86.12 3.16.77.83 1.24 1.88 1.24 3.17 0 4.53-2.81 5.53-5.49 5.82.43.36.81 1.08.81 2.18 0 1.58-.01 2.85-.01 3.24 0 .31.21.68.83.56C20.57 21.88 24 17.48 24 12.29 24 5.78 18.63.5 12 .5Z" /></svg>
+                </div>
+                <h3 class="mt-4 text-sm font-semibold text-foreground">Open source on GitHub</h3>
+                <p class="mt-1.5 text-sm leading-relaxed text-foreground/55">
+                    DevDojo Components is free and MIT-licensed. Star the repo to follow along and help shape what gets built next.
+                </p>
+                <a href="https://github.com/thedevdojo/components" target="_blank" rel="noreferrer"
+                    class="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-medium bg-primary px-3.5 py-2 text-sm font-medium text-primary-foreground shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.3)] transition hover:bg-primary/90">
+                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.37.5 0 5.78 0 12.29c0 5.2 3.44 9.6 8.21 11.16.6.11.82-.25.82-.56 0-.28-.01-1.02-.02-2-3.34.71-4.04-1.58-4.04-1.58-.55-1.36-1.33-1.73-1.33-1.73-1.09-.73.08-.71.08-.71 1.2.08 1.84 1.21 1.84 1.21 1.07 1.79 2.81 1.27 3.49.97.11-.76.42-1.27.76-1.56-2.67-.3-5.47-1.31-5.47-5.83 0-1.29.47-2.34 1.24-3.17-.12-.3-.54-1.52.12-3.16 0 0 1.01-.32 3.3 1.21.96-.26 1.98-.39 3-.4 1.02.01 2.04.14 3 .4 2.29-1.53 3.3-1.21 3.3-1.21.66 1.64.24 2.86.12 3.16.77.83 1.24 1.88 1.24 3.17 0 4.53-2.81 5.53-5.49 5.82.43.36.81 1.08.81 2.18 0 1.58-.01 2.85-.01 3.24 0 .31.21.68.83.56C20.57 21.88 24 17.48 24 12.29 24 5.78 18.63.5 12 .5Z" /></svg>
+                    Star on GitHub
+                </a>
+            </div>
+        </aside>
+    </div>
 
     @if (class_exists(\Livewire\Livewire::class))
         @livewireScripts
