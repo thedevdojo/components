@@ -47,7 +47,7 @@
 @php
     $topHighlight = ' shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.3),inset_0_-1px_1px_0_rgba(0,0,0,0.3)] dark:shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.3),inset_0_-1px_1px_0_rgba(255,255,255,0.15)]';
 
-    $defaultClasses = 'border-transparent no-underline bg-linear-to-b from-primary/90 via-primary/90 to-primary text-primary-foreground select-none focus-visible:ring-2 focus-visible:ring-primary/10 dark:focus-visible:ring-primary/20 focus-visible:ring-offset-2 focus-visible:ring-offset-background hover:opacity-95';
+    $defaultClasses = 'border-transparent no-underline bg-primary text-primary-foreground select-none focus-visible:ring-2 focus-visible:ring-primary/10 dark:focus-visible:ring-primary/20 focus-visible:ring-offset-2 focus-visible:ring-offset-background hover:opacity-95';
     switch ($variant ?? 'primary') {
         case 'primary':
             $typeClasses = $defaultClasses . $topHighlight;
