@@ -5,6 +5,7 @@
     'href' => null,
     'loader' => false,
     'loading' => false,
+    'topHighlight' => true
 ])
 
 @php
@@ -45,18 +46,18 @@
 @endphp
 
 @php
-    $topHighlight = ' shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.3),inset_0_-1px_1px_0_rgba(0,0,0,0.3)] dark:shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.3),inset_0_-1px_1px_0_rgba(255,255,255,0.15)]';
+    $topHighlightClasses = $topHighlight ? ' shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.3),inset_0_-1px_1px_0_rgba(0,0,0,0.3)] dark:shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.3),inset_0_-1px_1px_0_rgba(255,255,255,0.15)]' : '';
 
     $defaultClasses = 'border-transparent no-underline bg-primary text-primary-foreground select-none focus-visible:ring-2 focus-visible:ring-primary/10 dark:focus-visible:ring-primary/20 focus-visible:ring-offset-2 focus-visible:ring-offset-background hover:opacity-95';
     switch ($variant ?? 'primary') {
         case 'primary':
-            $typeClasses = $defaultClasses . $topHighlight;
+            $typeClasses = $defaultClasses . $topHighlightClasses;
             break;
         case 'secondary':
             $typeClasses = 'border-transparent no-underline text-secondary-foreground bg-secondary hover:bg-secondary/80 focus-visible:ring-2 focus-visible:ring-secondary/90 focus-visible:ring-offset-2 focus-visible:ring-offset-background';
             break;
         case 'destructive':
-            $typeClasses = 'border-transparent no-underline bg-destructive focus-visible:ring-2 focus-visible:ring-destructive/30 focus-visible:ring-offset-2 focus-visible:ring-offset-background text-white hover:opacity-95' . $topHighlight;
+            $typeClasses = 'border-transparent no-underline bg-destructive focus-visible:ring-2 focus-visible:ring-destructive/30 focus-visible:ring-offset-2 focus-visible:ring-offset-background text-white hover:opacity-95' . $topHighlightClasses;
             break;
         case 'outline':
             $typeClasses = 'no-underline text-foreground bg-background hover:bg-secondary border-foreground/10 dark:border-foreground/15 focus-visible:ring-2 focus-visible:ring-secondary/90 focus-visible:ring-offset-2 focus-visible:ring-offset-background';
