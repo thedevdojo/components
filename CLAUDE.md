@@ -127,3 +127,88 @@ So consumers can override styles:
 - [ ] Looks correct in light **and** dark (via tokens, not `dark:` patches)
 - [ ] `{name}.json` updated
 - [ ] `composer test` passes (style conventions test included)
+
+---
+
+# Migrating a host app's markup to these components (integration foot-guns)
+
+Hard-won notes from converting a real Laravel + Livewire + Alpine app's
+hand-rolled markup (`<button class="btn …">`, `x-show` modals, etc.) to these
+components. The recurring theme: **a `<x-component>` tag is parsed by Blade's
+component compiler, so it follows different rules than a native HTML element.**
+Markup that was valid on a `<button>`/`<div>` can break once it's a `<x-button>`.
+
+## A. Alpine `:`-bindings break on a component → escape with `::` (or `x-bind:`)
+
+- **Symptom:** `Undefined constant "…"` (e.g. `theme`), or a PHP error evaluating
+  what looks like JavaScript.
+- **Cause:** On a **native** element `:foo="bar"` is left untouched for Alpine.
+  On a **component** `:foo="bar"` is Blade's *PHP* bind — Blade evaluates `bar`
+  as PHP. So an Alpine expression like `:aria-label="$store.theme.isDark ? 'a' : 'b'"`
+  makes Blade read `$store.theme.isDark` as PHP (`. theme .` → undefined constant).
+- **Fix:** escape it so Blade emits a literal attribute for Alpine:
+  `::aria-label="$store.theme.isDark ? 'a' : 'b'"` (or `x-bind:aria-label="…"`).
+- **Note:** `@click`, `x-on:*`, `wire:*` are NOT affected (Blade only special-cases
+  the single `:` prefix). Genuine PHP `:` binds (`:href="route('x')"`,
+  `:variant="$popular ? 'primary' : 'secondary'"`) are correct and should stay.
+
+## B. No Blade directives or `{{ }}`-with-quotes inside a component tag → use bound `:` expressions
+
+- **Symptom:** `ParseError: syntax error, unexpected token …` in the compiled view,
+  or `ComponentTagCompiler::compileOpeningTags(): Argument #1 must be string, null given`.
+- **Cause:** Directives like `@disabled(...)` / `@class([...])` inject `<?php … ?>`
+  into the middle of the component's attribute-array construction, and `{{ }}`
+  echoes containing quotes/ternaries generate invalid PHP for the attribute string.
+- **Fix:** express dynamic attributes as bound PHP:
+  - `@disabled($isCurrent)` → `:disabled="$isCurrent"`
+  - `class="mt-6 w-full {{ $isCurrent ? '!opacity-60' : '' }}"` →
+    `:class="'mt-6 w-full'.($isCurrent ? ' !opacity-60' : '')"`
+- **Note:** a *simple* echo with no quotes is fine —
+  `wire:click="choose({{ $plan->id }})"` works.
+
+## C. Smart/curly quotes as attribute delimiters are fatal
+
+- **Symptom:** `compileOpeningTags(): … null given` (the tag-matching regex returns null).
+- **Cause:** an editor or AI agent wrote `variant=”ghost”` (U+201C/U+201D) instead of
+  `variant="ghost"`. Blade's component-tag regex can't parse curly delimiters.
+- **Fix:** straight ASCII `"` for all delimiters. Curly quotes are only OK as
+  *literal display text inside* a value (e.g. `wire:confirm="Delete “{{ $title }}”?"`).
+- **Always grep after a bulk/agent conversion:**
+  `grep -rnP '[\x{201c}\x{201d}\x{2018}\x{2019}]' resources/views`
+
+## D. Drive overlays from Livewire state, not the component's trigger
+
+For a Livewire-controlled modal/drawer, bind the open state instead of using the
+built-in trigger: read the property via `$attributes->whereStartsWith('wire:model')->first()`,
+**strip it** (`whereDoesntStartWith('wire:model')`) before spreading attributes onto
+the teleported panel, init Alpine from `$wire.entangle('<prop>')`, and suppress the
+trigger when controlled. Write the `x-data` open expression with `{!! … !!}` — `{{ }}`
+HTML-encodes the quotes in `$wire.entangle('prop')` and breaks Alpine.
+
+## E. Form labels & field metrics won't match by default
+
+`<x-input label="…">` renders the label via `<x-label>` (`text-sm`, `text-foreground`).
+If the host app's form labels differ (size/color), either pass bare `<x-input>` and
+keep the app's own `<label>`, or restyle `<x-label>` globally. Also: `<x-textarea>`
+defaults to `min-h-20` — override with `min-h-0` to match a compact field.
+
+## F. Escaping asymmetry to watch
+
+`card` escapes its polymorphic href (`e($href)`); `button`'s `type="a"` does **not**
+escape `href`. Safe for `route()` values, but escape it before exposing the button
+to user-controlled URLs. Sanitize any value interpolated into an inline `style`
+(e.g. `progress`'s `color` → `var(--dot-{color})`) with an allowlist or
+`preg_replace('/[^a-z0-9-]/', '', …)`.
+
+## G. Verification — build & unit tests do NOT catch view render errors
+
+A malformed component tag only fails **at render**. After any migration:
+
+- Run a **full-page smoke sweep** — HTTP GET every affected route and assert 2xx.
+  This is the only thing that reliably catches A–C above.
+- `npm run build` validates Tailwind classes, not Blade. `php artisan view:cache`
+  can catch compile errors but aborts on the first bad/dynamic component, so it's
+  unreliable as a gate.
+- Keep helper calls (`config()`, `route()`) **out of test file scope** — they run
+  during Pest collection before the app boots and abort the whole suite. Put them
+  inside `it()`/`beforeEach()` closures.

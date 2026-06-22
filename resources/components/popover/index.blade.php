@@ -2,6 +2,7 @@
     'position' => 'bottom',
     'align' => 'left',
     'gap' => '2',
+    'animate' => true,
 ])
 
 <div x-data="{
@@ -32,8 +33,6 @@
     getPopoverStyles() {
         let top = this.triggerPosition.top;
         let left = this.triggerPosition.left;
-        let transform = '';
-        let transformOrigin = '';
         let transformX = '';
         let transformY = '';
 
@@ -63,24 +62,29 @@
             transformY = 'translateY(-100%)';
         }
 
-        transform = [transformX, transformY].filter(t => t).join(' ');
-
-        if ('{{ $position }}' === 'bottom') {
-            transformOrigin = 'top left';
-        } else if ('{{ $position }}' === 'top') {
-            transformOrigin = 'bottom left';
-        } else if ('{{ $position }}' === 'right' || '{{ $position }}' === 'left') {
-            transformOrigin = 'bottom left';
-        }
-
         return {
             position: 'absolute',
             top: top + 'px',
             left: left + 'px',
-            transform: transform,
-            transformOrigin: transformOrigin,
+            transform: [transformX, transformY].filter(t => t).join(' '),
+            transformOrigin: this.getTransformOrigin(),
             zIndex: 50
         };
+    },
+
+    {{-- Scale-from-corner origin: the popover grows out of the corner nearest
+         the trigger (top-right for a right-aligned popover, top-left for left). --}}
+    getTransformOrigin() {
+        let originY = '{{ $position }}' === 'top' ? 'bottom' : 'top';
+        let originX = '{{ $position }}' === 'left' ? 'right' : 'left';
+
+        if ('{{ $position }}' === 'top' || '{{ $position }}' === 'bottom') {
+            originX = '{{ $align }}' === 'right' ? 'right' : ('{{ $align }}' === 'center' ? 'center' : 'left');
+        } else {
+            originY = '{{ $align }}' === 'bottom' ? 'bottom' : ('{{ $align }}' === 'center' ? 'center' : 'top');
+        }
+
+        return originY + ' ' + originX;
     },
 
     openPopover() {
@@ -112,12 +116,21 @@ x-modelable="popoverOpen"
             x-show="popoverOpen"
             x-on:click.away="popoverOpen = false"
             x-on:keydown.escape.window="popoverOpen = false"
-            x-transition:enter="transition ease-out duration-100"
-            x-transition:enter-start="opacity-0 scale-95"
-            x-transition:enter-end="opacity-100 scale-100"
-            x-transition:leave="transition ease-in duration-75"
-            x-transition:leave-start="opacity-100 scale-100"
-            x-transition:leave-end="opacity-0 scale-95"
+            @if ($animate)
+                x-transition:enter="transition ease-[cubic-bezier(0.16,1,0.3,1)] duration-200"
+                x-transition:enter-start="opacity-0 scale-95"
+                x-transition:enter-end="opacity-100 scale-100"
+                x-transition:leave="transition ease-in duration-150"
+                x-transition:leave-start="opacity-100 scale-100"
+                x-transition:leave-end="opacity-0 scale-95"
+            @else
+                x-transition:enter="transition ease-out duration-150"
+                x-transition:enter-start="opacity-0"
+                x-transition:enter-end="opacity-100"
+                x-transition:leave="transition ease-in duration-100"
+                x-transition:leave-start="opacity-100"
+                x-transition:leave-end="opacity-0"
+            @endif
             :style="getPopoverStyles()"
             x-cloak
             class="w-max max-w-sm">
