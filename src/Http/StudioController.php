@@ -16,7 +16,7 @@ class StudioController
      */
     public function index()
     {
-        return view('devdojo-components::showcase', [
+        return view('devdojo-components::studio.index', [
             'categories' => Components::byCategory(),
         ]);
     }

@@ -1,5 +1,6 @@
 <?php
 
+use DevDojo\Components\Components;
 use Illuminate\Support\Facades\Route;
 
 beforeEach(function () {
@@ -78,4 +79,17 @@ it('never executes Blade or PHP smuggled into slot content', function () {
     $this->get('/components/button/preview?'.http_build_query([
         'slots' => ['slot' => '{{ "pw"."ned" }}'],
     ]))->assertOk()->assertDontSee('pwned', false);
+});
+
+it('lists every component on the index with links to their pages', function () {
+    $response = $this->get('/components')->assertOk();
+
+    foreach (Components::all() as $component) {
+        $response->assertSee($component['label']);
+        $response->assertSee('/components/'.$component['name'], false);
+    }
+});
+
+it('renders the command palette items on the index', function () {
+    $this->get('/components')->assertOk()->assertSee('command-select', false);
 });
