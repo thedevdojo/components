@@ -110,6 +110,14 @@ So consumers can override styles:
   `<x-button />` on publish, so never hard-code `<x-button>` inside a source
   component.
 - Declare every prop with `@props([...])` and keep `{name}.json` in sync.
+- Each component may ship curated docs examples in
+  `resources/components/{name}/examples/*.blade.php`, declared in the
+  `examples` array of `{name}.json` (`title`, `description`, `file`, optional
+  `height`). Examples use the preview namespace and must pass the style
+  conventions test. They are **not** published to host apps.
+- `{name}.json` also declares `slots` and optional `studio` hints
+  (`defaults`, `container` with a `{{component}}` placeholder, `height`,
+  `card`) that drive the Component Studio playground at `/components/{name}`.
 
 ## 5. Spacing & interactivity
 
