@@ -12,7 +12,28 @@
         get filtered() {
             const q = this.search.trim().toLowerCase();
             if (! q) return this.items;
-            return this.items.filter(i => (i.title || '').toLowerCase().includes(q));
+            return this.items
+                .map(item => [item, this.score(item, q)])
+                .filter(([, score]) => score !== Infinity)
+                .sort((a, b) => a[1] - b[1])
+                .map(([item]) => item);
+        },
+        // Fuzzy rank: prefix beats substring beats a scattered subsequence,
+        // so 'dtpkr' still finds 'Date Picker'.
+        score(item, q) {
+            const title = (item.title || '').toLowerCase();
+            if (title.startsWith(q)) return 0;
+            const index = title.indexOf(q);
+            if (index !== -1) return 1 + index / 100;
+            let at = 0, gaps = 0, previous = -2;
+            for (const char of q) {
+                at = title.indexOf(char, at);
+                if (at === -1) return Infinity;
+                if (at !== previous + 1) gaps++;
+                previous = at;
+                at++;
+            }
+            return 3 + gaps + title.length / 100;
         },
         openPalette() {
             this.open = true;
@@ -35,7 +56,9 @@
             this.open = false;
         },
         showGroup(item, index) {
-            if (! item.group) return false;
+            // Results are ranked while searching, so group headers only make
+            // sense for the browse (empty-query) list.
+            if (! item.group || this.search.trim() !== '') return false;
             return index === 0 || (this.filtered[index - 1] || {}).group !== item.group;
         }
     }"
@@ -105,7 +128,7 @@
                     />
                 </div>
 
-                <div x-ref="list" :id="$id('dd-command')" role="listbox" class="max-h-80 overflow-y-auto overflow-x-hidden p-1.5">
+                <div x-ref="list" :id="$id('dd-command')" role="listbox" class="max-h-80 overflow-y-auto overflow-x-hidden overscroll-contain p-1.5">
                     <template x-for="(item, index) in filtered" :key="item.value">
                         <div>
                             <template x-if="showGroup(item, index)">

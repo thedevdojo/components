@@ -1,4 +1,4 @@
-<x-devdojo-components::studio.layout :categories="$categories">
+<x-devdojo-components::studio.layout :categories="$categories" width="wide">
     @php
         $baseUrl = rtrim(route('devdojo-components.showcase'), '/');
         $totalComponents = collect($categories)->flatMap(fn ($components) => $components)->count();
@@ -27,6 +27,12 @@
                 class="inline-flex h-8 items-center rounded-medium border border-foreground/10 bg-card px-3.5 text-[13px] font-medium text-foreground/70 outline-none transition hover:bg-secondary hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring active:scale-[0.98]">
                 Installation
             </a>
+            <button type="button" @click="$dispatch('command-open')"
+                class="inline-flex h-8 items-center gap-2 rounded-medium border border-foreground/10 bg-card pl-3 pr-1.5 text-[13px] text-foreground/45 outline-none transition hover:border-foreground/20 hover:text-foreground/70 focus-visible:ring-2 focus-visible:ring-ring sm:ml-auto">
+                <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /></svg>
+                Search components…
+                <x-components.kbd class="ml-4">⌘K</x-components.kbd>
+            </button>
         </div>
     </div>
 
@@ -45,7 +51,9 @@
                 </h2>
                 <div class="mt-4 grid grid-cols-1 gap-4 xl:grid-cols-2">
                     @foreach ($components as $component)
-                        <div x-show="matches(@js($component['label'].' '.$component['name'].' '.$component['description']))">
+                        <div x-show="matches(@js($component['label'].' '.$component['name'].' '.$component['description']))"
+                            x-transition:enter="transition ease-out duration-200" x-transition:enter-start="scale-[0.98] opacity-0" x-transition:enter-end="scale-100 opacity-100"
+                            x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100" x-transition:leave-end="scale-[0.98] opacity-0">
                             <x-devdojo-components::studio.card :component="$component" />
                         </div>
                     @endforeach
@@ -55,6 +63,7 @@
 
         {{-- Empty state while filtering --}}
         <div x-show="query.trim() !== '' && ! matchesAny(@js($allHaystacks))" x-cloak
+            x-transition:enter="transition ease-out duration-200" x-transition:enter-start="scale-[0.99] opacity-0" x-transition:enter-end="scale-100 opacity-100"
             class="flex flex-col items-center gap-1.5 rounded-large border border-dashed border-foreground/15 px-6 py-20 text-center">
             <svg class="h-5 w-5 text-foreground/30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /></svg>
             <p class="mt-2 text-sm font-medium text-foreground">No components match &ldquo;<span x-text="query.trim()"></span>&rdquo;</p>

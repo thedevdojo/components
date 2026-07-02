@@ -200,3 +200,20 @@ it('seeds playground state from the query string', function () {
         ->assertOk()
         ->assertSee('custom-path', false);
 });
+
+it('serves the whole library as markdown at llms.txt', function () {
+    $this->get('/components/llms.txt')
+        ->assertOk()
+        ->assertHeader('Content-Type', 'text/plain; charset=UTF-8')
+        ->assertSee('# DevDojo Components', false)
+        ->assertSee('# Button — DevDojo Components', false)
+        ->assertSee('php artisan components:add button', false)
+        ->assertSee('| Prop | Type | Default | Description |', false);
+});
+
+it('embeds a copyable markdown document on component pages', function () {
+    $this->get('/components/button')
+        ->assertOk()
+        ->assertSee('Copy Markdown', false)
+        ->assertSee('Button — DevDojo Components', false);
+});

@@ -3,6 +3,9 @@
     'current' => null,
     'currentGuide' => null,
     'title' => 'DevDojo Components',
+    // 'default' centers reading-width content and shows the "On this page"
+    // rail on very wide screens; 'wide' is for the browse grid.
+    'width' => 'default',
 ])
 
 @php
@@ -21,7 +24,7 @@
 @endphp
 
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en" class="motion-safe:scroll-smooth">
 
 <head>
     <meta charset="utf-8">
@@ -75,6 +78,33 @@
         .studio-scroll:focus-within {
             scrollbar-color: color-mix(in oklab, var(--foreground) 20%, transparent) transparent;
         }
+
+        /* Butter-smooth cross-page navigation (progressive enhancement —
+           browsers without the View Transitions API just navigate normally).
+           The sidebar and top bar keep their own snapshot so the frame feels
+           fixed, and the active nav pill slides to its new home. */
+        @media (prefers-reduced-motion: no-preference) {
+            @view-transition {
+                navigation: auto;
+            }
+            aside[aria-label="Sidebar"] {
+                view-transition-name: dd-sidebar;
+            }
+            #dd-mobile-topbar {
+                view-transition-name: dd-topbar;
+            }
+            [aria-current="page"] {
+                view-transition-name: dd-nav-active;
+            }
+            ::view-transition-group(dd-nav-active) {
+                animation-duration: 250ms;
+                animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+            }
+            ::view-transition-old(root),
+            ::view-transition-new(root) {
+                animation-duration: 180ms;
+            }
+        }
     </style>
 </head>
 
@@ -84,11 +114,19 @@
         query: '',
         mobileNav: false,
         toggle() {
-            this.dark = !this.dark;
-            document.documentElement.classList.toggle('dark', this.dark);
-            localStorage.setItem('dd-theme', this.dark ? 'dark' : 'light');
-            window.ddSyncThemeColor(this.dark);
-            window.dispatchEvent(new CustomEvent('dd-theme-changed', { detail: { dark: this.dark } }));
+            const apply = () => {
+                this.dark = !this.dark;
+                document.documentElement.classList.toggle('dark', this.dark);
+                localStorage.setItem('dd-theme', this.dark ? 'dark' : 'light');
+                window.ddSyncThemeColor(this.dark);
+                window.dispatchEvent(new CustomEvent('dd-theme-changed', { detail: { dark: this.dark } }));
+            };
+            // Crossfade the whole page between themes when the browser can.
+            if (document.startViewTransition && ! window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.startViewTransition(apply);
+            } else {
+                apply();
+            }
         },
         matches(haystack) {
             return this.query.trim() === '' || haystack.toLowerCase().includes(this.query.trim().toLowerCase());
@@ -116,7 +154,7 @@
     </x-components.command>
 
     {{-- Mobile top bar — the desktop layout uses the sidebar instead. --}}
-    <div class="sticky top-0 z-40 flex items-center justify-between gap-3 border-b border-foreground/10 bg-background/80 px-4 py-3 backdrop-blur-md lg:hidden">
+    <div id="dd-mobile-topbar" class="sticky top-0 z-40 flex items-center justify-between gap-3 border-b border-foreground/10 bg-background/80 px-4 py-3 backdrop-blur-md lg:hidden">
         <a href="{{ $baseUrl }}" class="flex items-center gap-2.5 rounded-medium text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring">
             <svg class="size-5" viewBox="0 0 39 39" fill="none" aria-hidden="true">
                 <path fill="currentColor" d="M13.71 13.71v11.495h11.495V13.71zM0 27.504V39h11.496V27.504zM0 0v11.496h11.496V0z" />
@@ -152,7 +190,7 @@
                 const offset = active.getBoundingClientRect().top - $el.getBoundingClientRect().top + $el.scrollTop;
                 if (offset > $el.clientHeight - 96) { $el.scrollTop = offset - $el.clientHeight / 2; }
             })"
-            class="studio-scroll absolute inset-y-0 left-0 flex w-80 max-w-[85vw] flex-col overflow-y-auto border-r border-foreground/10 bg-background px-4 pb-8 pt-4">
+            class="studio-scroll absolute inset-y-0 left-0 flex w-80 max-w-[85vw] flex-col overflow-y-auto overscroll-contain border-r border-foreground/10 bg-background px-4 pb-8 pt-4">
             <div class="flex items-center justify-between">
                 <a href="{{ $baseUrl }}" class="flex items-center gap-2.5 px-2.5 text-foreground">
                     <svg class="size-5" viewBox="0 0 39 39" fill="none" aria-hidden="true">
@@ -177,16 +215,18 @@
         </div>
     </div>
 
-    <div class="mx-auto flex w-full max-w-[88rem] gap-8 px-4 sm:px-6 lg:gap-10 lg:px-6">
-
-        {{-- ===================== SIDEBAR ===================== --}}
-        <aside aria-label="Sidebar" class="studio-scroll sticky top-0 hidden h-screen w-60 shrink-0 flex-col overflow-y-auto pb-6 pt-5 lg:flex"
-            x-init="(() => {
-                const active = $el.querySelector('[aria-current=page]');
-                if (! active) return;
-                const offset = active.getBoundingClientRect().top - $el.getBoundingClientRect().top;
-                if (offset > $el.clientHeight - 96) { $el.scrollTop = offset - $el.clientHeight / 2; }
-            })()">
+    {{-- ===================== SIDEBAR (pinned to the viewport edge) ===================== --}}
+    <aside aria-label="Sidebar" class="studio-scroll fixed inset-y-0 left-0 z-30 hidden w-64 flex-col overflow-y-auto overscroll-contain border-r border-foreground/10 bg-background px-4 pb-6 pt-5 lg:flex"
+        x-init="(() => {
+            {{-- Scroll position was restored inline below; only recenter when
+                 the active item still isn't in view, and remember every move
+                 so the sidebar feels like a fixed frame across pages. --}}
+            $el.addEventListener('scroll', () => sessionStorage.setItem('dd-sidebar-scroll', $el.scrollTop), { passive: true });
+            const active = $el.querySelector('[aria-current=page]');
+            if (! active) return;
+            const offset = active.getBoundingClientRect().top - $el.getBoundingClientRect().top;
+            if (offset < 48 || offset > $el.clientHeight - 96) { $el.scrollTop += offset - $el.clientHeight / 2; }
+        })()">
             <div class="flex items-center justify-between px-2">
                 <a href="{{ $baseUrl }}" class="flex items-center gap-2 rounded-medium text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring">
                     <svg class="size-[18px]" viewBox="0 0 39 39" fill="none" aria-hidden="true">
@@ -207,7 +247,7 @@
                 <input type="text" x-model="query" x-ref="filter" placeholder="Filter…"
                     @keydown.escape.stop="query = ''; $el.blur()"
                     class="w-full border-none bg-transparent p-0 text-[13px] text-foreground placeholder:text-foreground/40 focus:outline-none focus:ring-0" />
-                <kbd class="rounded-small border border-foreground/10 bg-secondary px-1.5 font-mono text-[10px] text-foreground/50">/</kbd>
+                <x-components.kbd class="h-[18px] text-[10px]">/</x-components.kbd>
             </label>
 
             @include('devdojo-components::components.studio.nav')
@@ -219,9 +259,88 @@
             </a>
         </aside>
 
-        {{-- ===================== MAIN ===================== --}}
-        <main id="studio-main" class="min-w-0 flex-1 py-6 lg:py-7">
-            {{ $slot }}
+    {{-- Restore the sidebar's scroll position before first paint so it reads
+         as one continuous frame across page navigations. --}}
+    <script>
+        (() => {
+            const aside = document.currentScript.previousElementSibling;
+            const stored = sessionStorage.getItem('dd-sidebar-scroll');
+            if (aside && stored !== null) { aside.scrollTop = parseInt(stored, 10); }
+        })();
+    </script>
+
+    {{-- ===================== MAIN (centered in the remaining space) ===================== --}}
+    <div class="lg:pl-64">
+        <main id="studio-main"
+            @class([
+                'mx-auto flex w-full gap-12 px-4 pb-6 pt-6 sm:px-6 lg:px-10 lg:pb-10 lg:pt-8',
+                'max-w-6xl' => $width === 'wide',
+                'max-w-4xl min-[90rem]:max-w-[71rem]' => $width !== 'wide',
+            ])>
+            <div class="min-w-0 flex-1">
+                {{ $slot }}
+
+                <footer class="mt-16 flex flex-wrap items-center justify-between gap-3 border-t border-foreground/10 pt-6 text-[13px] text-foreground/45">
+                    <p>
+                        Built by <a href="https://devdojo.com" target="_blank" rel="noreferrer" class="rounded-small font-medium text-foreground/60 outline-none transition hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring">DevDojo</a> — components you own.
+                        <span class="mx-1.5 select-none text-foreground/20">·</span>
+                        <a href="{{ $baseUrl }}/llms.txt" title="The whole library as one Markdown document for AI assistants" class="rounded-small font-medium text-foreground/60 outline-none transition hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring">llms.txt</a>
+                    </p>
+                    <p class="flex items-center gap-1.5">
+                        <x-components.kbd>⌘K</x-components.kbd>
+                        to search
+                    </p>
+                </footer>
+            </div>
+
+            @if ($width !== 'wide')
+                {{-- "On this page" rail — built from [data-toc] headings so every
+                     docs page gets it for free. Shown on very wide screens only. --}}
+                <nav aria-label="On this page" x-cloak
+                    x-data="{
+                        items: [],
+                        active: '',
+                        spy() {
+                            const visible = this.items.filter(item => document.getElementById(item.id)?.offsetParent);
+                            this.count = visible.length;
+                            let current = visible[0]?.id ?? '';
+                            for (const item of visible) {
+                                if (document.getElementById(item.id).getBoundingClientRect().top <= 120) { current = item.id; }
+                            }
+                            this.active = current;
+                        },
+                        count: 0
+                    }"
+                    x-init="(() => {
+                        items = [...document.querySelectorAll('#studio-main [data-toc]')].map(el => ({ id: el.id, label: el.dataset.toc || el.textContent.trim() }));
+                        // Hover anchors on every TOC-able heading.
+                        document.querySelectorAll('#studio-main [data-toc]').forEach(el => {
+                            el.classList.add('group');
+                            const anchor = document.createElement('a');
+                            anchor.href = '#' + el.id;
+                            anchor.ariaLabel = 'Link to this section';
+                            anchor.textContent = '#';
+                            anchor.className = 'ml-2 font-normal text-foreground/35 !no-underline opacity-0 outline-none transition-opacity hover:text-foreground/60 focus-visible:opacity-100 group-hover:opacity-100';
+                            el.appendChild(anchor);
+                        });
+                        spy();
+                        window.addEventListener('scroll', () => spy(), { passive: true });
+                        window.addEventListener('dd-toc-refresh', () => spy());
+                    })()"
+                    x-show="count > 1"
+                    class="studio-scroll sticky top-8 hidden max-h-[calc(100vh-6rem)] w-44 shrink-0 self-start overflow-y-auto overscroll-contain min-[90rem]:block">
+                    <p class="text-[11px] font-medium uppercase tracking-wider text-foreground/40">On this page</p>
+                    <ul class="mt-2.5 flex flex-col border-l border-foreground/10">
+                        <template x-for="item in items" :key="item.id">
+                            <li x-show="count > 0 && document.getElementById(item.id)?.offsetParent">
+                                <a :href="'#' + item.id" x-text="item.label" @click="active = item.id"
+                                    class="-ml-px block border-l py-1 pl-3.5 text-[13px] leading-5 outline-none transition-colors focus-visible:text-foreground"
+                                    :class="active === item.id ? 'border-foreground/60 font-medium text-foreground' : 'border-transparent text-foreground/50 hover:text-foreground'"></a>
+                            </li>
+                        </template>
+                    </ul>
+                </nav>
+            @endif
         </main>
     </div>
 

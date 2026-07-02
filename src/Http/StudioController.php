@@ -4,6 +4,7 @@ namespace DevDojo\Components\Http;
 
 use DevDojo\Components\CodeGenerator;
 use DevDojo\Components\Components;
+use DevDojo\Components\Markdown;
 use DevDojo\Components\Publisher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
@@ -18,6 +19,17 @@ class StudioController
     {
         return view('devdojo-components::studio.index', [
             'categories' => Components::byCategory(),
+        ]);
+    }
+
+    /**
+     * The whole library as one Markdown document — paste-ready context for
+     * AI assistants, following the llms.txt convention.
+     */
+    public function llms()
+    {
+        return response(Markdown::full(), 200, [
+            'Content-Type' => 'text/plain; charset=UTF-8',
         ]);
     }
 

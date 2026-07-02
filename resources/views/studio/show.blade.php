@@ -31,6 +31,7 @@
                 const params = new URLSearchParams(window.location.search);
                 value === 'docs' ? params.delete('tab') : params.set('tab', value);
                 history.replaceState(null, '', window.location.pathname + (params.toString() ? '?' + params.toString() : ''));
+                this.$nextTick(() => window.dispatchEvent(new CustomEvent('dd-toc-refresh')));
             }
         }"
         class="flex flex-col gap-6">
@@ -52,15 +53,29 @@
                 @endif
             </div>
 
-            {{-- Install snippet --}}
-            <div class="group flex max-w-md items-center justify-between gap-3 rounded-medium border border-foreground/10 bg-card py-1.5 pl-3 pr-1.5 transition-colors hover:border-foreground/20"
-                x-data="{ copied: false }">
-                <code class="truncate font-mono text-[13px] text-foreground/75"><span class="select-none text-foreground/30">$ </span>php artisan components:add {{ $meta['name'] }}</code>
-                <button type="button"
-                    @click="ddCopy('php artisan components:add {{ $meta['name'] }}'); copied = true; setTimeout(() => copied = false, 1500)"
-                    class="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-small text-foreground/40 outline-none transition hover:bg-secondary hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring active:scale-95" aria-label="Copy install command">
-                    <svg x-show="!copied" class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" /><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" /></svg>
-                    <svg x-show="copied" x-cloak class="h-3.5 w-3.5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg>
+            {{-- Install snippet + copy-for-AI --}}
+            @php
+                $markdown = \DevDojo\Components\Markdown::component($meta, $examples->all());
+            @endphp
+            <div class="flex flex-wrap items-center gap-2">
+                <div class="group flex w-full max-w-md items-center justify-between gap-3 rounded-medium border border-foreground/10 bg-card py-1.5 pl-3 pr-1.5 transition-colors hover:border-foreground/20"
+                    x-data="{ copied: false }">
+                    <code class="truncate font-mono text-[13px] text-foreground/75"><span class="select-none text-foreground/30">$ </span>php artisan components:add {{ $meta['name'] }}</code>
+                    <button type="button"
+                        @click="ddCopy('php artisan components:add {{ $meta['name'] }}'); copied = true; setTimeout(() => copied = false, 1500)"
+                        class="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-small text-foreground/40 outline-none transition hover:bg-secondary hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring active:scale-95" aria-label="Copy install command">
+                        <svg x-show="!copied" class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" /><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" /></svg>
+                        <svg x-show="copied" x-cloak x-transition:enter="transition ease-out duration-200" x-transition:enter-start="scale-50 opacity-0" x-transition:enter-end="scale-100 opacity-100" class="h-3.5 w-3.5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg>
+                    </button>
+                </div>
+                {{-- The whole page as Markdown — paste-ready context for AI assistants. --}}
+                <button type="button" x-data="{ copied: false }"
+                    @click="ddCopy(@js($markdown)); copied = true; setTimeout(() => copied = false, 1500)"
+                    title="Copy this page as Markdown — paste-ready context for AI assistants"
+                    class="inline-flex h-[38px] items-center gap-1.5 rounded-medium border border-foreground/10 bg-card px-3 text-[13px] font-medium text-foreground/60 outline-none transition hover:bg-secondary hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring active:scale-[0.98]">
+                    <svg x-show="!copied" class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /><path d="M10 9H8" /><path d="M16 13H8" /><path d="M16 17H8" /></svg>
+                    <svg x-show="copied" x-cloak x-transition:enter="transition ease-out duration-200" x-transition:enter-start="scale-50 opacity-0" x-transition:enter-end="scale-100 opacity-100" class="h-3.5 w-3.5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg>
+                    <span x-text="copied ? 'Copied!' : 'Copy Markdown'"></span>
                 </button>
             </div>
         </div>
@@ -78,13 +93,15 @@
         </div>
 
         {{-- ================= DOCS TAB ================= --}}
-        <div x-show="tab === 'docs'" id="studio-panel-docs" role="tabpanel" aria-labelledby="studio-tab-docs" class="flex flex-col gap-10">
+        <div x-show="tab === 'docs'" id="studio-panel-docs" role="tabpanel" aria-labelledby="studio-tab-docs"
+            x-transition:enter="transition ease-out duration-200" x-transition:enter-start="translate-y-1 opacity-0" x-transition:enter-end="translate-y-0 opacity-100"
+            class="flex flex-col gap-10">
 
             @forelse ($examples as $example)
                 <section class="flex flex-col gap-3.5" x-data="{ view: 'preview' }">
                     <div class="flex flex-wrap items-end justify-between gap-3">
                         <div>
-                            <h2 class="text-lg font-semibold tracking-tight">{{ $example['title'] }}</h2>
+                            <h2 id="{{ Str::slug($example['title']) }}" data-toc="{{ $example['title'] }}" class="scroll-mt-24 text-lg font-semibold tracking-tight lg:scroll-mt-8">{{ $example['title'] }}</h2>
                             @if (! empty($example['description']))
                                 <p class="mt-1 max-w-2xl text-pretty text-sm leading-6 text-foreground/55">{{ $example['description'] }}</p>
                             @endif
@@ -100,6 +117,7 @@
                     </div>
 
                     <div x-show="view === 'preview'" x-data="{ loaded: false }"
+                        x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
                         class="overflow-hidden rounded-large border border-foreground/10 bg-background bg-[radial-gradient(var(--color-border)_1px,transparent_1px)] [background-size:18px_18px]">
                         <iframe title="{{ $example['title'] }} preview" loading="lazy" @load="loaded = true" data-auto-height
                             :src="'{{ $previewBase }}?example={{ Str::of($example['file'])->basename('.blade.php') }}&theme=' + (dark ? 'dark' : 'light')"
@@ -107,13 +125,14 @@
                             class="block w-full transition-[opacity,height] duration-300"
                             style="height: {{ $example['height'] ?? '16rem' }}; min-height: {{ $example['height'] ?? '16rem' }};"></iframe>
                     </div>
-                    <div x-show="view === 'code'" x-cloak>
+                    <div x-show="view === 'code'" x-cloak
+                        x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
                         <x-devdojo-components::studio.code-block :code="$example['code']" />
                     </div>
                 </section>
             @empty
                 <section class="flex flex-col gap-3.5" x-data="{ loaded: false }">
-                    <h2 class="text-lg font-semibold tracking-tight">Preview</h2>
+                    <h2 id="preview" data-toc="Preview" class="scroll-mt-24 text-lg font-semibold tracking-tight lg:scroll-mt-8">Preview</h2>
                     <div class="overflow-hidden rounded-large border border-foreground/10 bg-background bg-[radial-gradient(var(--color-border)_1px,transparent_1px)] [background-size:18px_18px]">
                         <iframe title="{{ $meta['label'] }} preview" loading="lazy" @load="loaded = true" data-auto-height
                             :src="'{{ $previewBase }}?theme=' + (dark ? 'dark' : 'light')"
@@ -127,7 +146,7 @@
             {{-- Reference tables --}}
             @if (count($meta['props']))
                 <section class="flex flex-col gap-3.5">
-                    <h2 class="text-lg font-semibold tracking-tight">Props</h2>
+                    <h2 id="props" data-toc="Props" class="scroll-mt-24 text-lg font-semibold tracking-tight lg:scroll-mt-8">Props</h2>
                     <div class="studio-scroll overflow-x-auto rounded-medium border border-foreground/10">
                         <table class="w-full text-left text-sm">
                             <thead>
@@ -157,7 +176,7 @@
 
             @if (count($meta['slots']))
                 <section class="flex flex-col gap-3.5">
-                    <h2 class="text-lg font-semibold tracking-tight">Slots</h2>
+                    <h2 id="slots" data-toc="Slots" class="scroll-mt-24 text-lg font-semibold tracking-tight lg:scroll-mt-8">Slots</h2>
                     <div class="studio-scroll overflow-x-auto rounded-medium border border-foreground/10">
                         <table class="w-full text-left text-sm">
                             <thead>
@@ -210,6 +229,7 @@
 
         {{-- ================= BUILD TAB (Storybook-style) ================= --}}
         <div x-show="tab === 'build'" x-cloak id="studio-panel-build" role="tabpanel" aria-labelledby="studio-tab-build"
+            x-transition:enter="transition ease-out duration-200" x-transition:enter-start="translate-y-1 opacity-0" x-transition:enter-end="translate-y-0 opacity-100"
             x-data="studioPlayground({
                 name: @js($meta['name']),
                 previewBase: @js($previewBase),
@@ -265,18 +285,29 @@
 
                 {{-- Dotted surface — flips to the dark palette with the stage theme so a
                      dark component sits on a dark surface. --}}
-                <div class="flex min-h-0 flex-1 flex-col items-center overflow-auto bg-background bg-[radial-gradient(var(--color-border)_1px,transparent_1px)] [background-size:18px_18px] p-6" :class="{ 'dark': stageDark }">
-                    {{-- Constrained widths get a device-like frame so the viewport
-                         boundary is visible against the dotted surface. --}}
-                    <iframe x-ref="stage" title="{{ $meta['label'] }} preview" :src="stageSrc"
-                        class="w-full max-w-full flex-1 rounded-medium transition-[width] duration-300"
-                        :class="stageWidth === '100%' ? 'bg-transparent' : 'border border-foreground/10 bg-background shadow-md'"
-                        :style="'width: ' + stageWidth" style="min-height: 14rem;"></iframe>
+                <div class="flex min-h-0 flex-1 flex-col items-center overflow-auto bg-background bg-[radial-gradient(var(--color-border)_1px,transparent_1px)] [background-size:18px_18px] p-6 transition-colors duration-300" :class="{ 'dark': stageDark }">
+                    {{-- Two stacked iframes double-buffer the preview: the next
+                         state loads in the hidden one and crossfades in when
+                         ready, so knob changes never flash a blank reload.
+                         Constrained widths get a device-like frame so the
+                         viewport boundary is visible against the dots. --}}
+                    <div class="relative w-full max-w-full flex-1 overflow-hidden rounded-medium border transition-[width,box-shadow,border-color,background-color] duration-300"
+                        :class="stageWidth === '100%' ? 'border-transparent bg-transparent' : 'border-foreground/10 bg-background shadow-md'"
+                        :style="'width: ' + stageWidth" style="min-height: 14rem;">
+                        <iframe x-ref="stage0" title="{{ $meta['label'] }} preview"
+                            class="absolute inset-0 h-full w-full transition-opacity duration-200"
+                            :class="activeStage === 0 ? 'opacity-100' : 'pointer-events-none opacity-0'"
+                            :aria-hidden="activeStage !== 0 ? 'true' : null"></iframe>
+                        <iframe x-ref="stage1" title="{{ $meta['label'] }} preview"
+                            class="absolute inset-0 h-full w-full opacity-0 transition-opacity duration-200"
+                            :class="activeStage === 1 ? 'opacity-100' : 'pointer-events-none opacity-0'"
+                            :aria-hidden="activeStage !== 1 ? 'true' : null"></iframe>
+                    </div>
                 </div>
             </div>
 
             {{-- ===== Resize handle (drag or arrow keys to size the drawer, double-click to reset) ===== --}}
-            <div @pointerdown="startResize($event)" @dblclick="drawerHeight = 320"
+            <div @pointerdown="startResize($event)" @dblclick="resetDrawer()"
                 @keydown.arrow-up.prevent="drawerHeight = Math.min(640, drawerHeight + 24)"
                 @keydown.arrow-down.prevent="drawerHeight = Math.max(140, drawerHeight - 24)"
                 role="separator" aria-orientation="horizontal" aria-label="Resize controls drawer" tabindex="0"
@@ -285,7 +316,7 @@
             </div>
 
             {{-- ===== Bottom drawer (Controls / Code) ===== --}}
-            <div class="flex shrink-0 flex-col overflow-hidden bg-card" :style="'height: ' + drawerHeight + 'px'">
+            <div class="flex shrink-0 flex-col overflow-hidden bg-card" :class="drawerAnimating ? 'transition-[height] duration-300 ease-out' : ''" :style="'height: ' + drawerHeight + 'px'">
                 <div class="flex items-center justify-between border-b border-foreground/10 pl-2 pr-2">
                     <div class="flex items-center">
                         <button type="button" @click="drawerTab = 'controls'"
@@ -298,7 +329,7 @@
                     <button type="button" x-show="drawerTab === 'code'" @click="copy()"
                         class="inline-flex h-7 items-center gap-1.5 rounded-small px-2 text-xs font-medium text-foreground/50 outline-none transition hover:bg-secondary/60 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring">
                         <svg x-show="!copied" class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" /><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" /></svg>
-                        <svg x-show="copied" x-cloak class="h-3.5 w-3.5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg>
+                        <svg x-show="copied" x-cloak x-transition:enter="transition ease-out duration-200" x-transition:enter-start="scale-50 opacity-0" x-transition:enter-end="scale-100 opacity-100" class="h-3.5 w-3.5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg>
                         <span x-text="copied ? 'Copied!' : 'Copy'"></span>
                     </button>
                 </div>
@@ -356,10 +387,13 @@
                 stageDark: document.documentElement.classList.contains('dark'),
                 stageWidth: '100%',
                 stageSrc: '',
+                activeStage: 0,
                 drawerTab: 'controls',
                 drawerHeight: 320,
+                drawerAnimating: false,
                 _initial: JSON.parse(JSON.stringify({ attrs: config.attrs, slots: config.slots })),
                 _timer: null,
+                _loadToken: 0,
 
                 init() {
                     // Booleans arrive as query strings — normalize before binding knobs.
@@ -371,7 +405,8 @@
                     this._initial = JSON.parse(JSON.stringify({ attrs: this.attrs, slots: this.slots }));
                     this.generateCode();
                     this.stageSrc = this.previewSrc();
-                    this.$watch('stageDark', () => this.refresh(true));
+                    this.$refs.stage0.src = this.stageSrc;
+                    this.$watch('stageDark', () => this.refresh());
                 },
 
                 update() {
@@ -381,9 +416,26 @@
                     this.syncUrl();
                 },
 
+                // Double-buffered refresh: load the next state into the hidden
+                // iframe and only swap once it has fully rendered.
                 refresh() {
                     clearTimeout(this._timer);
-                    this.stageSrc = this.previewSrc();
+                    const next = this.previewSrc();
+                    if (next === this.stageSrc) { return; }
+                    this.stageSrc = next;
+                    const incomingIndex = this.activeStage === 0 ? 1 : 0;
+                    const incoming = this.$refs['stage' + incomingIndex];
+                    const token = ++this._loadToken;
+                    incoming.addEventListener('load', () => {
+                        if (token === this._loadToken) { this.activeStage = incomingIndex; }
+                    }, { once: true });
+                    incoming.src = next;
+                },
+
+                resetDrawer() {
+                    this.drawerAnimating = true;
+                    this.drawerHeight = 320;
+                    setTimeout(() => this.drawerAnimating = false, 350);
                 },
 
                 previewSrc() {
