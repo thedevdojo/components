@@ -13,6 +13,10 @@
     ],
     "slots": [
         { "name": "trigger", "description": "The clickable element that opens the dropdown." },
-        { "name": "menu", "description": "Pre-styled menu container slot." }
-    ]
+        { "name": "menu", "description": "Pre-styled menu container slot." },
+        { "name": "slot", "description": "Fallback menu content when no `menu` slot is given.", "default": "<a href=\"#\" class=\"block rounded-medium px-3 py-2 text-sm text-foreground/80 hover:bg-secondary\">Profile</a><a href=\"#\" class=\"block rounded-medium px-3 py-2 text-sm text-foreground/80 hover:bg-secondary\">Settings</a><a href=\"#\" class=\"block rounded-medium px-3 py-2 text-sm text-foreground/80 hover:bg-secondary\">Sign out</a>" }
+    ],
+    "studio": {
+        "container": "<div class=\"flex min-h-96 w-full items-center justify-center\">{{component}}</div>"
+    }
 }

@@ -6,5 +6,8 @@
     "dependencies": [],
     "props": [
         { "name": "for", "type": "text", "default": "", "description": "The id of the form control this label is bound to." }
+    ],
+    "slots": [
+        { "name": "slot", "description": "The label text.", "default": "Email address" }
     ]
 }

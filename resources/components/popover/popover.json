@@ -12,6 +12,10 @@
     ],
     "slots": [
         { "name": "trigger", "description": "The clickable element that opens the popover." },
-        { "name": "content", "description": "Pre-styled panel container slot." }
-    ]
+        { "name": "content", "description": "Pre-styled panel container slot." },
+        { "name": "slot", "description": "Fallback panel content when no `content` slot is given.", "default": "Popover content goes here." }
+    ],
+    "studio": {
+        "container": "<div class=\"flex min-h-96 w-full items-center justify-center\">{{component}}</div>"
+    }
 }

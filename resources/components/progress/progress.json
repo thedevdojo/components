@@ -9,5 +9,8 @@
         { "name": "max", "type": "text", "default": "100", "description": "The value representing 100% complete." },
         { "name": "size", "type": "select", "default": "md", "options": ["sm", "md", "lg"], "description": "Thickness of the bar." },
         { "name": "indeterminate", "type": "boolean", "default": false, "description": "Show a looping animation for work of unknown duration." }
-    ]
+    ],
+    "studio": {
+        "defaults": { "value": "60" }
+    }
 }

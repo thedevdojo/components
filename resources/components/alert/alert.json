@@ -9,5 +9,12 @@
         { "name": "icon", "type": "text", "default": null, "description": "Optional component name to render as a leading icon." },
         { "name": "title", "type": "text", "default": "", "description": "Bold heading line." },
         { "name": "description", "type": "text", "default": "", "description": "Body text (accepts HTML)." }
-    ]
+    ],
+    "slots": [
+        { "name": "slot", "description": "Optional extra content below the title and description." }
+    ],
+    "studio": {
+        "container": "<div class=\"w-full max-w-lg mx-auto\">{{component}}</div>",
+        "defaults": { "title": "Heads up", "description": "This alert calls out something the user should notice." }
+    }
 }

@@ -11,8 +11,13 @@
     ],
     "slots": [
         { "name": "trigger", "description": "Custom element that opens the modal." },
-        { "name": "header", "description": "Modal heading." },
-        { "name": "content", "description": "Main modal body." },
+        { "name": "header", "description": "Modal heading.", "default": "Modal Title" },
+        { "name": "content", "description": "Main modal body.", "default": "The main body content for your modal will go here." },
         { "name": "footer", "description": "Action row, usually buttons." }
-    ]
+    ],
+    "studio": {
+        "container": "<div class=\"flex min-h-96 w-full items-center justify-center\">{{component}}</div>",
+        "defaults": { "open": true },
+        "height": "28rem"
+    }
 }

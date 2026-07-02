@@ -7,5 +7,9 @@
     "props": [
         { "name": "type", "type": "text", "default": "text", "description": "The native input type (text, email, password, number, etc.)." },
         { "name": "label", "type": "text", "default": null, "description": "Optional label rendered above the input." }
-    ]
+    ],
+    "studio": {
+        "container": "<div class=\"w-full max-w-sm mx-auto\">{{component}}</div>",
+        "defaults": { "label": "Full name" }
+    }
 }

@@ -55,9 +55,9 @@ it('applies the dark theme class to the preview document', function () {
 });
 
 it('wraps overlay components in their studio container', function () {
-    // modal declares studio.container in Task 7; until then this asserts the
-    // pass-through path renders. Strengthened in Task 7 Step 4.
-    $this->get('/components/modal/preview')->assertOk();
+    $this->get('/components/modal/preview')
+        ->assertOk()
+        ->assertSee('min-h-96', false);
 });
 
 it('returns 404 for unknown components', function () {

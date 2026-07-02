@@ -12,5 +12,8 @@
         { "name": "circle", "type": "boolean", "default": false, "description": "Render a full circle instead of a rounded square." },
         { "name": "color", "type": "text", "default": null, "description": "A soft color (blue, green, amber, rose, violet, cyan, orange, teal, pink, indigo) or 'auto' to derive one from the name." },
         { "name": "status", "type": "select", "default": null, "options": ["online", "away", "busy", "offline"], "description": "Optional presence dot in the corner." }
+    ],
+    "slots": [
+        { "name": "slot", "description": "Custom fallback content, shown when there's no src, initials or name." }
     ]
 }

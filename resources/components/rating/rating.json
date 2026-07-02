@@ -10,5 +10,8 @@
         { "name": "readonly", "type": "boolean", "default": false, "description": "Display the rating without allowing changes." },
         { "name": "name", "type": "text", "default": null, "description": "Name for a hidden input, for plain form submission." },
         { "name": "size", "type": "select", "default": "md", "options": ["sm", "md", "lg"], "description": "Star size." }
-    ]
+    ],
+    "studio": {
+        "defaults": { "value": "3" }
+    }
 }

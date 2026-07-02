@@ -11,5 +11,11 @@
         { "name": "disabled", "type": "boolean", "default": false, "description": "Disable the radio." },
         { "name": "clickable", "type": "boolean", "default": false, "description": "Make the whole row a single click target." },
         { "name": "hideRadio", "type": "boolean", "default": false, "description": "Hide the visual dot." }
-    ]
+    ],
+    "slots": [
+        { "name": "slot", "description": "Custom content instead of the label/description props." }
+    ],
+    "studio": {
+        "defaults": { "label": "Email me about product updates" }
+    }
 }

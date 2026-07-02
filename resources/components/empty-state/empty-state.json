@@ -8,5 +8,12 @@
         { "name": "title", "type": "text", "default": "", "description": "The headline message." },
         { "name": "description", "type": "text", "default": "", "description": "Supporting text below the title." }
     ],
+    "slots": [
+        { "name": "icon", "description": "Custom icon overriding the default illustration." },
+        { "name": "slot", "description": "Call-to-action buttons or content shown below the description." }
+    ],
+    "studio": {
+        "defaults": { "title": "No results found", "description": "Try adjusting your filters or search terms." }
+    },
     "usage": "Put call-to-action buttons in the default slot; override the icon with <x-slot:icon>…</x-slot:icon>."
 }

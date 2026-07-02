@@ -8,5 +8,18 @@
         { "name": "items", "type": "array", "default": [], "description": "Array of { title, value, group?, icon? (SVG string), shortcut? } objects." },
         { "name": "placeholder", "type": "text", "default": "Type a command or search…", "description": "Search input placeholder." }
     ],
+    "slots": [
+        { "name": "trigger", "description": "Custom trigger element that opens the palette." }
+    ],
+    "studio": {
+        "container": "<div class=\"flex min-h-96 w-full items-center justify-center\">{{component}}</div>",
+        "defaults": {
+            "items": [
+                { "title": "Create new project", "value": "new-project", "group": "Actions" },
+                { "title": "Invite teammate", "value": "invite", "group": "Actions" },
+                { "title": "Go to settings", "value": "settings", "group": "Navigation" }
+            ]
+        }
+    },
     "usage": "Open with ⌘K/Ctrl+K, a click on the trigger, or by dispatching a window 'command-open' event. Provide a custom trigger via <x-slot:trigger>. Listen for the 'command-select' event to act on a choice."
 }

@@ -15,5 +15,8 @@
         { "name": "lineNumbers", "type": "boolean", "default": true, "description": "Show the line-number gutter." },
         { "name": "minimap", "type": "boolean", "default": false, "description": "Show the minimap." }
     ],
+    "studio": {
+        "card": "<div class=\"text-sm text-foreground/60\">Loads the Monaco bundle — open the docs to preview.</div>"
+    },
     "usage": "Requires the JS bundle: php artisan vendor:publish --tag=devdojo-assets"
 }

@@ -7,5 +7,8 @@
     "props": [
         { "name": "label", "type": "text", "default": null, "description": "Optional label rendered above the control." },
         { "name": "placeholder", "type": "text", "default": null, "description": "Optional disabled-style first option with an empty value." }
+    ],
+    "slots": [
+        { "name": "slot", "description": "<option> elements for the select.", "default": "<option value=\"free\">Free</option><option value=\"pro\">Pro</option><option value=\"enterprise\">Enterprise</option>" }
     ]
 }

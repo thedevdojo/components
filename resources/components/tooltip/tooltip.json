@@ -11,6 +11,11 @@
         { "name": "delay", "type": "text", "default": "100", "description": "Delay in milliseconds before showing." }
     ],
     "slots": [
+        { "name": "slot", "description": "The element the tooltip is attached to.", "default": "<x-components.button variant=\"outline\" size=\"sm\">Hover me</x-components.button>" },
         { "name": "tip", "description": "Rich tooltip content (overrides the content prop)." }
-    ]
+    ],
+    "studio": {
+        "container": "<div class=\"flex min-h-96 w-full items-center justify-center\">{{component}}</div>",
+        "defaults": { "content": "This is a helpful tip." }
+    }
 }

@@ -7,5 +7,8 @@
     "props": [
         { "name": "label", "type": "text", "default": null, "description": "Optional label rendered above the field." },
         { "name": "rows", "type": "text", "default": "4", "description": "Initial visible number of text rows." }
+    ],
+    "slots": [
+        { "name": "slot", "description": "Initial textarea content (rendered inside the <textarea> tag)." }
     ]
 }

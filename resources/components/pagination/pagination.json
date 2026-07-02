@@ -8,5 +8,8 @@
         { "name": "currentPage", "type": "text", "default": "1", "description": "The active page number." },
         { "name": "totalPages", "type": "text", "default": "1", "description": "Total number of pages." },
         { "name": "baseUrl", "type": "text", "default": null, "description": "Base URL for page links; defaults to the current request URL with a ?page= query." }
-    ]
+    ],
+    "studio": {
+        "defaults": { "currentPage": "4", "totalPages": "12" }
+    }
 }

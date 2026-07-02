@@ -42,3 +42,32 @@ it('defaults slots, examples and studio keys on every manifest entry', function 
             ->and($component['studio'])->toBeArray();
     }
 });
+
+it('declares complete, well-formed studio metadata', function () {
+    $allowedTypes = ['text', 'select', 'boolean', 'textarea', 'number', 'integer', 'array'];
+
+    foreach (Components::all() as $component) {
+        foreach ($component['props'] as $prop) {
+            expect($prop)->toHaveKey('name');
+            expect($prop['type'] ?? 'text')->toBeIn($allowedTypes);
+        }
+
+        foreach ($component['slots'] as $slot) {
+            expect($slot)->toHaveKey('name');
+        }
+
+        if ($container = $component['studio']['container'] ?? null) {
+            expect($container)->toContain('{{component}}');
+        }
+    }
+});
+
+it('declares slots on every component that renders a default slot', function () {
+    foreach (Components::all() as $component) {
+        $blade = file_get_contents(Components::sourcePath($component['name'].'/index.blade.php'));
+
+        if (str_contains($blade, '{{ $slot }}')) {
+            expect(collect($component['slots'])->pluck('name'))->toContain('slot');
+        }
+    }
+});

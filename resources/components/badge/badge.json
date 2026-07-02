@@ -10,5 +10,8 @@
         { "name": "icon", "type": "text", "default": null, "description": "Optional component name to render as an icon (e.g. a Blade icon)." },
         { "name": "iconPosition", "type": "select", "default": "before", "options": ["before", "after"], "description": "Render the icon before or after the label." },
         { "name": "pill", "type": "boolean", "default": false, "description": "Use a fully rounded pill shape instead of the default rounded corners." }
+    ],
+    "slots": [
+        { "name": "slot", "description": "The main content for the badge.", "default": "Badge" }
     ]
 }
