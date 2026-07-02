@@ -5,7 +5,10 @@
 ])
 
 @php
-    $paletteItems = collect(\DevDojo\Components\Components::all())
+    // Flatten byCategory() so palette groups stay contiguous and in the
+    // sidebar's display order (byCategory already encodes that order).
+    $paletteItems = \DevDojo\Components\Components::byCategory()
+        ->flatMap(fn ($components) => $components)
         ->map(fn (array $component) => [
             'title' => $component['label'],
             'value' => $component['name'],

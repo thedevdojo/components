@@ -4,6 +4,13 @@
     $baseUrl = rtrim(route('devdojo-components.showcase'), '/');
     $previewMarkup = $component['studio']['card']
         ?? '<x-components.'.$component['name'].' />';
+
+    // One misbehaving component must not 500 the whole index grid.
+    try {
+        $previewHtml = \Illuminate\Support\Facades\Blade::render($previewMarkup);
+    } catch (\Throwable $e) {
+        $previewHtml = '<p class="text-xs text-foreground/40">Preview unavailable</p>';
+    }
 @endphp
 
 <div class="flex flex-col overflow-hidden rounded-large border border-foreground/10 bg-card shadow-xs transition hover:border-foreground/20">
@@ -22,12 +29,26 @@
 
         @if (class_exists(\Livewire\Livewire::class))
             <livewire:devdojo-components.card :name="$component['name']" :key="'card-'.$component['name']" />
+        @else
+            {{-- Fallback when Livewire isn't installed: copy the add command. --}}
+            <button type="button"
+                x-data="{ copied: false }"
+                @click="navigator.clipboard.writeText('php artisan components:add {{ $component['name'] }}'); copied = true; setTimeout(() => copied = false, 1500)"
+                class="inline-flex shrink-0 items-center gap-1.5 self-start rounded-medium border border-foreground/10 bg-background px-2.5 py-1.5 font-mono text-xs text-foreground/70 transition hover:bg-secondary hover:text-foreground">
+                <template x-if="!copied">
+                    <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" /><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" /></svg>
+                </template>
+                <template x-if="copied">
+                    <svg class="h-3.5 w-3.5 text-green-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg>
+                </template>
+                <span x-text="copied ? 'Copied!' : 'add {{ $component['name'] }}'"></span>
+            </button>
         @endif
     </div>
 
     <div class="flex min-h-[9rem] flex-1 items-center justify-center bg-[radial-gradient(var(--color-border)_1px,transparent_1px)] [background-size:16px_16px] p-6">
         <div class="flex w-full max-w-md flex-col items-center">
-            {!! \Illuminate\Support\Facades\Blade::render($previewMarkup) !!}
+            {!! $previewHtml !!}
         </div>
     </div>
 
