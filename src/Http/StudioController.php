@@ -92,7 +92,9 @@ class StudioController
 
     /**
      * Current playground state: declared props/slots only, query values
-     * overlaid on studio defaults then prop defaults.
+     * overlaid on studio defaults then prop defaults. Each value is
+     * constrained by the prop's declared type so scalar props can never
+     * receive array-shaped query input.
      *
      * @param  array<string, mixed>  $component
      * @return array{0: array<string, mixed>, 1: array<string, string>}
@@ -100,17 +102,23 @@ class StudioController
     protected function playgroundState(array $component, Request $request): array
     {
         $studioDefaults = $component['studio']['defaults'] ?? [];
+        $queryAttrs = (array) $request->query('attrs', []);
+        $querySlots = (array) $request->query('slots', []);
 
         $attrs = [];
 
         foreach ($component['props'] as $prop) {
             $key = $prop['name'];
             $default = $studioDefaults[$key] ?? $prop['default'] ?? '';
-            $value = $request->query('attrs')[$key] ?? $default;
+            $value = $queryAttrs[$key] ?? $default;
+            $type = $prop['type'] ?? 'text';
 
-            // Booleans arrive from the query string as "true"/"false".
-            if (($prop['type'] ?? 'text') === 'boolean') {
+            if ($type === 'boolean') {
+                // Booleans arrive from the query string as "true"/"false".
                 $value = $value === true || $value === 'true';
+            } elseif ($type !== 'array') {
+                // Scalar props: reject array-shaped input outright.
+                $value = is_scalar($value) ? (string) $value : '';
             }
 
             $attrs[$key] = $value;
@@ -120,12 +128,14 @@ class StudioController
 
         foreach ($component['slots'] as $slot) {
             $key = $slot['name'];
-            $slotValues[$key] = (string) ($request->query('slots')[$key] ?? $slot['default'] ?? '');
+            $value = $querySlots[$key] ?? $slot['default'] ?? '';
+            $slotValues[$key] = is_scalar($value) ? (string) $value : '';
         }
 
         if (! array_key_exists('slot', $slotValues)) {
             $fallback = $component['slots'] === [] ? '' : $component['label'];
-            $slotValues['slot'] = (string) ($request->query('slots')['slot'] ?? $fallback);
+            $value = $querySlots['slot'] ?? $fallback;
+            $slotValues['slot'] = is_scalar($value) ? (string) $value : '';
         }
 
         return [$attrs, $slotValues];

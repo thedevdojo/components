@@ -42,6 +42,16 @@ it('renders associative arrays as PHP literal maps', function () {
     expect($code)->toContain(":options=\"['us' => 'United States']\"");
 });
 
+it('drops array values whose PHP literal would contain a double quote', function () {
+    $code = CodeGenerator::generate('button', ['variant' => ['x" <x-evil z=']], published: true);
+
+    expect($code)->toBe('<x-button />');
+
+    $code = CodeGenerator::generate('button', ['variant' => '{"a":"x\" <x-evil>"}'], published: true);
+
+    expect($code)->toBe('<x-button />');
+});
+
 it('escapes double quotes in string values', function () {
     $code = CodeGenerator::generate('input', ['placeholder' => 'Say "hi"'], published: true);
 

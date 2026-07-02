@@ -36,6 +36,17 @@ it('ignores undeclared attrs instead of rendering them', function () {
         ->assertDontSee('alert(1)', false);
 });
 
+it('neutralizes array-shaped and JSON-shaped attr values on scalar props', function () {
+    $this->get('/components/button/preview?attrs[variant][]=x')
+        ->assertOk()
+        ->assertDontSee('syntax error', false)
+        ->assertSee('<button', false);
+
+    $this->get('/components/button/preview?'.http_build_query([
+        'attrs' => ['variant' => '["x\" <x-evil z="]'],
+    ]))->assertOk()->assertDontSee('x-evil', false)->assertDontSee('syntax error', false);
+});
+
 it('applies the dark theme class to the preview document', function () {
     $this->get('/components/button/preview?theme=dark')
         ->assertOk()

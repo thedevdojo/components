@@ -68,16 +68,32 @@ class CodeGenerator
         }
 
         if (is_array($value)) {
-            return ':'.$key.'="'.static::phpLiteral($value).'"';
+            return static::boundAttribute($key, static::phpLiteral($value));
         }
 
         if (is_string($value)
             && (str_starts_with($value, '[') || str_starts_with($value, '{'))
-            && json_decode($value, true) !== null) {
-            return ':'.$key.'="'.static::phpLiteral(json_decode($value, true)).'"';
+            && ($decoded = json_decode($value, true)) !== null) {
+            return static::boundAttribute($key, static::phpLiteral($decoded));
         }
 
         return $key.'="'.e((string) $value).'"';
+    }
+
+    /**
+     * Render a :key="literal" bound attribute, or null when it cannot be
+     * emitted safely. A raw double quote inside the literal would terminate
+     * the attribute early in Blade's component tag compiler and let the
+     * remainder be re-parsed as new tag syntax, so such values are dropped
+     * rather than emitted.
+     */
+    protected static function boundAttribute(string $key, string $literal): ?string
+    {
+        if (str_contains($literal, '"')) {
+            return null;
+        }
+
+        return ':'.$key.'="'.$literal.'"';
     }
 
     /**
