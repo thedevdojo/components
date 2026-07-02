@@ -16,5 +16,9 @@
         "container": "<div class=\"h-64 w-full overflow-hidden rounded-medium border border-foreground/10\">{{component}}</div>",
         "height": "18rem"
     },
-    "usage": "Loads Split.js from a CDN automatically. Compose with <x-splitter.pane> children and give each an optional size to set its initial percentage."
+    "usage": "Loads Split.js from a CDN automatically. Compose with <x-splitter.pane> children and give each an optional size to set its initial percentage.",
+    "examples": [
+        { "title": "Horizontal", "description": "Drag the seam to resize two side-by-side panes.", "file": "horizontal.blade.php", "height": "20rem" },
+        { "title": "Vertical", "description": "Stack panes top to bottom instead.", "file": "vertical.blade.php", "height": "20rem" }
+    ]
 }

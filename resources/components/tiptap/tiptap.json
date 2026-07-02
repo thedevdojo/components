@@ -13,5 +13,8 @@
     "studio": {
         "card": "<div class=\"text-sm text-foreground/60\">Loads a JS bundle — open the docs to preview.</div>"
     },
-    "usage": "Requires the JS bundle: php artisan vendor:publish --tag=devdojo-assets"
+    "usage": "Requires the JS bundle: php artisan vendor:publish --tag=devdojo-assets",
+    "examples": [
+        { "title": "Basic", "description": "A configurable toolbar with headings, lists, and links.", "file": "basic.blade.php", "height": "18rem" }
+    ]
 }

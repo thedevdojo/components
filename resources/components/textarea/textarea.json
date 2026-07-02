@@ -10,5 +10,8 @@
     ],
     "slots": [
         { "name": "slot", "description": "Initial textarea content (rendered inside the <textarea> tag)." }
+    ],
+    "examples": [
+        { "title": "Basic", "description": "A multi-line field matching the input styling.", "file": "basic.blade.php" }
     ]
 }

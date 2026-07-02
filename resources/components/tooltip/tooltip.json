@@ -17,5 +17,8 @@
     "studio": {
         "container": "<div class=\"flex min-h-96 w-full items-center justify-center\">{{component}}</div>",
         "defaults": { "content": "This is a helpful tip." }
-    }
+    },
+    "examples": [
+        { "title": "Placements", "description": "Hover or focus the trigger to see the tooltip.", "file": "placements.blade.php" }
+    ]
 }

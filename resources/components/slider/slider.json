@@ -10,5 +10,8 @@
         { "name": "max", "type": "text", "default": "100", "description": "Maximum value." },
         { "name": "step", "type": "text", "default": "1", "description": "Increment between values." },
         { "name": "showValue", "type": "boolean", "default": false, "description": "Show the current value next to the label." }
+    ],
+    "examples": [
+        { "title": "Basic", "description": "A labeled slider with a live value readout, and a bare one.", "file": "basic.blade.php" }
     ]
 }

@@ -10,5 +10,8 @@
     "slots": [
         { "name": "slot", "description": "Composed of <x-tabs.list>, <x-tabs.tab> and <x-tabs.panel>.", "default": "<x-components.tabs.list><x-components.tabs.tab tab=\"account\">Account</x-components.tabs.tab><x-components.tabs.tab tab=\"billing\">Billing</x-components.tabs.tab></x-components.tabs.list><x-components.tabs.panel tab=\"account\">Manage your account details here.</x-components.tabs.panel><x-components.tabs.panel tab=\"billing\">Manage your plan and payment details here.</x-components.tabs.panel>" }
     ],
-    "usage": "Match each <x-tabs.tab tab=\"key\"> to an <x-tabs.panel tab=\"key\">. The first tab is selected automatically."
+    "usage": "Match each <x-tabs.tab tab=\"key\"> to an <x-tabs.panel tab=\"key\">. The first tab is selected automatically.",
+    "examples": [
+        { "title": "Basic", "description": "A segmented control switching between three panels.", "file": "basic.blade.php", "height": "18rem" }
+    ]
 }

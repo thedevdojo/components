@@ -10,5 +10,8 @@
         { "name": "checked", "type": "boolean", "default": false, "description": "Whether the toggle starts on." },
         { "name": "disabled", "type": "boolean", "default": false, "description": "Disable the toggle." },
         { "name": "size", "type": "select", "default": "md", "options": ["sm", "md", "lg"], "description": "The size of the switch." }
+    ],
+    "examples": [
+        { "title": "Sizes", "description": "Three sizes, with label and description.", "file": "sizes.blade.php" }
     ]
 }
