@@ -3,7 +3,6 @@
 use DevDojo\Components\Components;
 use DevDojo\Components\Livewire\ComponentCard;
 use DevDojo\Components\Publisher;
-use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\File;
 use Livewire\Livewire;
 
@@ -74,15 +73,16 @@ it('re-adds (overwrites) a component via the livewire card', function () {
 
 it('does not publish example files into the host application', function () {
     $sourceExamples = Components::sourcePath('button/examples');
-    (new Filesystem)->ensureDirectoryExists($sourceExamples);
-    file_put_contents($sourceExamples.'/smoke.blade.php', '<x-components.button>Example</x-components.button>');
+    File::ensureDirectoryExists($sourceExamples);
+    File::put($sourceExamples.'/smoke.blade.php', '<x-components.button>Example</x-components.button>');
 
-    $publisher = app(Publisher::class);
-    $publisher->publish('button', force: true);
+    try {
+        $publisher = app(Publisher::class);
+        $publisher->publish('button', force: true);
 
-    expect(is_file($publisher->destinationDir('button').'/index.blade.php'))->toBeTrue()
-        ->and(is_dir($publisher->destinationDir('button').'/examples'))->toBeFalse();
-
-    unlink($sourceExamples.'/smoke.blade.php');
-    @rmdir($sourceExamples);
+        expect(is_file($publisher->destinationDir('button').'/index.blade.php'))->toBeTrue()
+            ->and(is_dir($publisher->destinationDir('button').'/examples'))->toBeFalse();
+    } finally {
+        File::deleteDirectory($sourceExamples);
+    }
 });
