@@ -12,5 +12,8 @@
     ],
     "studio": {
         "defaults": { "value": "60" }
-    }
+    },
+    "examples": [
+        { "title": "Sizes & indeterminate", "description": "Three thicknesses, plus a looping animation for unknown-duration work.", "file": "basic.blade.php" }
+    ]
 }

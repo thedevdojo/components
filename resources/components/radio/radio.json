@@ -17,5 +17,8 @@
     ],
     "studio": {
         "defaults": { "label": "Email me about product updates" }
-    }
+    },
+    "examples": [
+        { "title": "Basic group", "description": "Mutually exclusive options sharing the same name.", "file": "basic.blade.php" }
+    ]
 }

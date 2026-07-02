@@ -11,5 +11,8 @@
     ],
     "studio": {
         "defaults": { "currentPage": "4", "totalPages": "12" }
-    }
+    },
+    "examples": [
+        { "title": "Basic", "description": "Previous/next controls with a windowed list of page numbers.", "file": "basic.blade.php" }
+    ]
 }

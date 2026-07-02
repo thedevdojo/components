@@ -13,5 +13,8 @@
     ],
     "studio": {
         "defaults": { "value": "3" }
-    }
+    },
+    "examples": [
+        { "title": "Sizes & read-only", "description": "Interactive stars in two sizes, plus a read-only display mode.", "file": "basic.blade.php" }
+    ]
 }

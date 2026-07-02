@@ -10,5 +10,8 @@
     ],
     "slots": [
         { "name": "slot", "description": "<option> elements for the select.", "default": "<option value=\"free\">Free</option><option value=\"pro\">Pro</option><option value=\"enterprise\">Enterprise</option>" }
+    ],
+    "examples": [
+        { "title": "Basic", "description": "A labeled select with a placeholder option.", "file": "basic.blade.php" }
     ]
 }
