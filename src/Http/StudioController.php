@@ -212,10 +212,13 @@ class StudioController
     }
 
     /**
-     * Break Blade echo/directive tokens in untrusted attribute input so the
-     * preview compiler cannot execute them. Recurses into arrays so element
-     * strings inside a :prop="[...]" bound attribute are covered too. Render
-     * path only — never the displayed/copyable code.
+     * Strip every Blade echo/directive trigger character ({ } @) from untrusted
+     * attribute input. Blade constructs all begin with one of these, so removing
+     * them makes the preview compiler unable to form any echo/directive — even
+     * from 3+-brace runs or ${...} variable-variable reformation. Recurses into
+     * arrays so element strings inside a :prop="[...]" bound attribute are
+     * covered too. Render path only; the displayed/copyable code keeps the
+     * user's literal value.
      */
     protected function neutralizeAttribute(mixed $value): mixed
     {
@@ -227,11 +230,7 @@ class StudioController
             return $value;
         }
 
-        return str_ireplace(
-            ['{{', '}}', '{!!', '!!}', '@'],
-            ['{ {', '} }', '{ !!', '!! }', ' '],
-            $value
-        );
+        return str_replace(['{', '}', '@'], '', $value);
     }
 
     /**

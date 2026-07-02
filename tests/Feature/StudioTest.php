@@ -91,24 +91,27 @@ it('never executes Blade or PHP smuggled into slot content', function () {
 });
 
 it('neutralizes Blade echo and directive syntax in attribute values', function () {
-    // {{ }} echo — `id` output ("uid=") only appears if system() actually ran.
-    $this->get('/components/button/preview?'.http_build_query([
-        'attrs' => ['variant' => '{{ system(chr(105).chr(100)) }}'],
-    ]))->assertOk()->assertDontSee('uid=', false);
+    // Each payload executes system('id') or phpinfo() if the compiler ran it;
+    // "uid=" / "PHP Version" only appear on execution — genuine inert markers.
+    $payloads = [
+        '{{ system(chr(105).chr(100)) }}',
+        '{!! phpinfo() !!}',
+        '{{{${system(chr(105).chr(100))}}}',      // triple-brace + ${} reformation (the bypass)
+        '}}}}{{{{ system(chr(105).chr(100)) }}}}', // brace-run reformation
+        '@php system(chr(105).chr(100)); @endphp',
+        '@class([\'x\' => true])',
+    ];
 
-    // {!! !!} raw echo — "PHP Version" only appears if phpinfo() ran.
-    $this->get('/components/button/preview?'.http_build_query([
-        'attrs' => ['variant' => '{!! phpinfo() !!}'],
-    ]))->assertOk()->assertDontSee('phpinfo()', false)->assertDontSee('PHP Version', false);
+    foreach ($payloads as $p) {
+        $this->get('/components/button/preview?'.http_build_query(['attrs' => ['variant' => $p]]))
+            ->assertOk()
+            ->assertDontSee('uid=', false)         // system('id') output
+            ->assertDontSee('PHP Version', false);  // phpinfo output
+    }
 
-    // @class directive must not blow up or be compiled/evaluated.
-    $this->get('/components/button/preview?'.http_build_query([
-        'attrs' => ['variant' => '@class([\'x\' => true])'],
-    ]))->assertOk();
-
-    // {{ }} embedded inside an array-shaped value (boundAttribute path).
-    $this->get('/components/button/preview?'.http_build_query([
-        'attrs' => ['variant' => '{"a":"{{ system(chr(105)) }}"}'],
+    // array-typed prop path (command.items) must also be inert.
+    $this->get('/components/command/preview?'.http_build_query([
+        'attrs' => ['items' => ['{{{${system(chr(105).chr(100))}}}']],
     ]))->assertOk()->assertDontSee('uid=', false);
 
     // example[] as an array must not 500.
