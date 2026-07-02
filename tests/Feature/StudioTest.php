@@ -90,6 +90,31 @@ it('never executes Blade or PHP smuggled into slot content', function () {
     ]))->assertOk()->assertDontSee('pwned', false);
 });
 
+it('neutralizes Blade echo and directive syntax in attribute values', function () {
+    // {{ }} echo — `id` output ("uid=") only appears if system() actually ran.
+    $this->get('/components/button/preview?'.http_build_query([
+        'attrs' => ['variant' => '{{ system(chr(105).chr(100)) }}'],
+    ]))->assertOk()->assertDontSee('uid=', false);
+
+    // {!! !!} raw echo — "PHP Version" only appears if phpinfo() ran.
+    $this->get('/components/button/preview?'.http_build_query([
+        'attrs' => ['variant' => '{!! phpinfo() !!}'],
+    ]))->assertOk()->assertDontSee('phpinfo()', false)->assertDontSee('PHP Version', false);
+
+    // @class directive must not blow up or be compiled/evaluated.
+    $this->get('/components/button/preview?'.http_build_query([
+        'attrs' => ['variant' => '@class([\'x\' => true])'],
+    ]))->assertOk();
+
+    // {{ }} embedded inside an array-shaped value (boundAttribute path).
+    $this->get('/components/button/preview?'.http_build_query([
+        'attrs' => ['variant' => '{"a":"{{ system(chr(105)) }}"}'],
+    ]))->assertOk()->assertDontSee('uid=', false);
+
+    // example[] as an array must not 500.
+    $this->get('/components/button/preview?example[]=x')->assertOk();
+});
+
 it('lists every component on the index with links to their pages', function () {
     $response = $this->get('/components')->assertOk();
 

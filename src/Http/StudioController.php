@@ -63,12 +63,14 @@ class StudioController
 
         $component = Components::get($name);
 
-        if ($example = $this->exampleSource($component, $request->query('example'))) {
+        $requestedExample = is_string($request->query('example')) ? $request->query('example') : null;
+
+        if ($example = $this->exampleSource($component, $requestedExample)) {
             $code = $example;
         } else {
             [$attrs, $slotValues] = $this->playgroundState($component, $request);
 
-            // Only user-supplied slot values (present in the query string) are
+            // Only user-supplied values (present in the query string) are
             // untrusted and must be neutralized against Blade/PHP injection.
             // Package-authored defaults are trusted and render raw, so their
             // <x-components.*> markup compiles like an example file does.
@@ -80,7 +82,18 @@ class StudioController
                     : $value;
             }
 
-            $code = CodeGenerator::generate($name, $attrs, $renderSlots);
+            // e() (htmlspecialchars) does not escape { } ! ( ) @, so Blade's
+            // ComponentTagCompiler would still run compileEchos/directives on a
+            // raw attr value — break those tokens for query-supplied attrs only.
+            $userAttrKeys = array_keys((array) $request->query('attrs', []));
+            $renderAttrs = [];
+            foreach ($attrs as $key => $value) {
+                $renderAttrs[$key] = in_array($key, $userAttrKeys, true)
+                    ? $this->neutralizeAttribute($value)
+                    : $value;
+            }
+
+            $code = CodeGenerator::generate($name, $renderAttrs, $renderSlots);
 
             if ($container = $component['studio']['container'] ?? null) {
                 $code = str_replace('{{component}}', $code, $container);
@@ -196,6 +209,29 @@ class StudioController
         $content = str_ireplace(['@verbatim', '@endverbatim'], '', $content);
 
         return '@verbatim'.$content.'@endverbatim';
+    }
+
+    /**
+     * Break Blade echo/directive tokens in untrusted attribute input so the
+     * preview compiler cannot execute them. Recurses into arrays so element
+     * strings inside a :prop="[...]" bound attribute are covered too. Render
+     * path only — never the displayed/copyable code.
+     */
+    protected function neutralizeAttribute(mixed $value): mixed
+    {
+        if (is_array($value)) {
+            return array_map(fn ($v) => $this->neutralizeAttribute($v), $value);
+        }
+
+        if (! is_string($value)) {
+            return $value;
+        }
+
+        return str_ireplace(
+            ['{{', '}}', '{!!', '!!}', '@'],
+            ['{ {', '} }', '{ !!', '!! }', ' '],
+            $value
+        );
     }
 
     /**
