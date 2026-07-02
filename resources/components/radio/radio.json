@@ -16,6 +16,7 @@
         { "name": "slot", "description": "Custom content instead of the label/description props." }
     ],
     "studio": {
+        "card": "<div class=\"flex w-full max-w-xs flex-col gap-3\"><x-components.radio name=\"plan\" label=\"Hobby\" description=\"For personal projects\" /><x-components.radio name=\"plan\" label=\"Pro\" description=\"For growing teams\" checked /></div>",
         "defaults": { "label": "Email me about product updates" }
     },
     "examples": [

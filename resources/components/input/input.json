@@ -9,6 +9,7 @@
         { "name": "label", "type": "text", "default": null, "description": "Optional label rendered above the input." }
     ],
     "studio": {
+        "card": "<div class=\"w-full max-w-xs\"><x-components.input label=\"Email\" type=\"email\" placeholder=\"you@example.com\" /></div>",
         "container": "<div class=\"w-full max-w-sm mx-auto\">{{component}}</div>",
         "defaults": { "label": "Full name" }
     },

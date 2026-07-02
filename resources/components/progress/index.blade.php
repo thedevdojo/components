@@ -15,7 +15,7 @@
         'lg' => 'h-3',
         default => 'h-2',
     };
-    $trackBg = $safeColor ? 'bg-elevated' : 'bg-secondary';
+    $trackBg = 'bg-secondary';
 @endphp
 
 @once

@@ -11,6 +11,9 @@
         { "name": "step", "type": "text", "default": "1", "description": "Increment between values." },
         { "name": "showValue", "type": "boolean", "default": false, "description": "Show the current value next to the label." }
     ],
+    "studio": {
+        "card": "<div class=\"w-full max-w-xs\"><x-components.slider label=\"Volume\" show-value value=\"40\" /></div>"
+    },
     "examples": [
         { "title": "Basic", "description": "A labeled slider with a live value readout, and a bare one.", "file": "basic.blade.php" }
     ]

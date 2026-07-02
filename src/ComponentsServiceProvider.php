@@ -91,6 +91,9 @@ class ComponentsServiceProvider extends ServiceProvider
             ->group(function (): void {
                 Route::get('/', [StudioController::class, 'index'])
                     ->name('devdojo-components.showcase');
+                Route::get('/guide/{page}', [StudioController::class, 'guide'])
+                    ->where('page', '[a-z0-9\-]+')
+                    ->name('devdojo-components.guide');
                 Route::get('/{name}/preview', [StudioController::class, 'preview'])
                     ->where('name', '[a-z0-9\-]+')
                     ->name('devdojo-components.preview');

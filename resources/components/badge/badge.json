@@ -14,6 +14,9 @@
     "slots": [
         { "name": "slot", "description": "The main content for the badge.", "default": "Badge" }
     ],
+    "studio": {
+        "card": "<div class=\"flex flex-wrap items-center justify-center gap-2\"><x-components.badge>Primary</x-components.badge><x-components.badge variant=\"secondary\">Secondary</x-components.badge><x-components.badge variant=\"success\">Success</x-components.badge><x-components.badge variant=\"outline\" pill>Outline</x-components.badge></div>"
+    },
     "examples": [
         { "title": "Variants", "description": "Solid, soft status and outline treatments.", "file": "variants.blade.php" },
         { "title": "Sizes & pill", "description": "Three sizes, plus a pill shape with a leading icon.", "file": "sizes.blade.php" }

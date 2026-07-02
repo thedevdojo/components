@@ -4,8 +4,10 @@
     'collapsible' => 'offcanvas'
 ])
 
-<aside
-    x-data="{ 
+{{-- display:contents wrapper hosts the Alpine scope so both the <aside> and
+     the mobile scrim below share it without affecting flex layout. --}}
+<div class="contents"
+    x-data="{
         sidebarOpen: true,
         get isOpen() {
             return typeof isSidebarOpen !== 'undefined' ? isSidebarOpen : this.sidebarOpen;
@@ -66,7 +68,8 @@
             }
         }
     }"
-    @sidebar-toggle.window="sidebarOpen = !sidebarOpen"
+    @sidebar-toggle.window="sidebarOpen = !sidebarOpen">
+<aside
     x-bind:class="{
         'w-[var(--sidebar-width)]': isOpen,
         'w-[var(--sidebar-width)] lg:w-0 lg:-ml-px': !isOpen && '{{ $collapsible }}' != 'icon',
@@ -74,12 +77,13 @@
         'lg:translate-x-0 -translate-x-full' : !isOpen,
         'translate-x-0' : isOpen
     }"
-    {{ $attributes->merge(['class' => 
-        \Illuminate\Support\Arr::toCssClasses([
+    {{ $attributes->merge([
+        'style' => '--sidebar-width: 16rem; --sidebar-width-icon: 3rem;',
+        'class' => \Illuminate\Support\Arr::toCssClasses([
             'fixed left-0 z-40 lg:relative flex h-dvh flex-shrink-0 border-sidebar-border flex-col overflow-hidden duration-500 ease-in-out lg:duration-200 lg:ease-linear transition-[transform] lg:transition-[width]',
             'border-l border-r-0' => $side === 'right' && $variant === 'sidebar',
             'border-r border-l-0' => $side === 'left' && $variant === 'sidebar'
-        ])
+        ]),
     ]) }}
 >
     <div @class([
@@ -101,3 +105,4 @@
     </div>
 </aside>
 <div class="fixed inset-0 bg-black/80 z-30 lg:hidden block" x-show="isOpen" @click="close()"></div>
+</div>

@@ -21,6 +21,7 @@
         { "name": "footer", "description": "Sticky footer, usually actions." }
     ],
     "studio": {
+        "card": "<x-components.drawer header=\"Drawer Title\" content=\"The main content for your drawer goes here.\"><x-slot:trigger><x-components.button variant=\"outline\" size=\"sm\">Open drawer</x-components.button></x-slot:trigger></x-components.drawer>",
         "container": "<div class=\"flex min-h-96 w-full items-center justify-center\">{{component}}</div>",
         "defaults": { "open": true, "header": "Drawer Title", "content": "The main content for your drawer goes here." }
     },

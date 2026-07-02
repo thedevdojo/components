@@ -2,6 +2,7 @@
 
 use DevDojo\Components\Components;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
 
 beforeEach(function () {
     $this->withoutVite();
@@ -10,11 +11,22 @@ beforeEach(function () {
 it('registers the studio routes', function () {
     expect(Route::has('devdojo-components.showcase'))->toBeTrue()
         ->and(Route::has('devdojo-components.show'))->toBeTrue()
-        ->and(Route::has('devdojo-components.preview'))->toBeTrue();
+        ->and(Route::has('devdojo-components.preview'))->toBeTrue()
+        ->and(Route::has('devdojo-components.guide'))->toBeTrue();
 });
 
 it('serves the index at the configured route', function () {
     $this->get('/components')->assertOk();
+});
+
+it('renders each getting-started guide page', function (string $page) {
+    $this->get('/components/guide/'.$page)
+        ->assertOk()
+        ->assertSee(Str::headline($page));
+})->with(['introduction', 'installation', 'usage', 'styling']);
+
+it('404s an unknown guide page', function () {
+    $this->get('/components/guide/nope')->assertNotFound();
 });
 
 it('renders a component preview with default state', function () {

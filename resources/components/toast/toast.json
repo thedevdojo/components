@@ -8,6 +8,7 @@
         { "name": "duration", "type": "text", "default": "5000", "description": "How long each toast stays visible, in milliseconds." }
     ],
     "studio": {
+        "card": "<x-components.button variant=\"outline\" size=\"sm\" x-on:click=\"$dispatch('pop-toast', { message: 'Saved', type: 'success', description: 'Your changes are safe.' })\">Show a toast</x-components.button>",
         "container": "<div class=\"flex min-h-64 items-center justify-center\"><x-components.button x-on:click=\"$dispatch('pop-toast', { message: 'Saved', type: 'success', description: 'Your changes are safe.' })\">Pop a toast</x-components.button>{{component}}</div>"
     },
     "usage": "Place <x-toast /> once in your layout. Then call toast('Saved!', 'success') in JS, dispatch a 'pop-toast' Livewire event, or flash session('toast').",

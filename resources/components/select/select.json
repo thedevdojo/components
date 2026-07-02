@@ -11,6 +11,9 @@
     "slots": [
         { "name": "slot", "description": "<option> elements for the select.", "default": "<option value=\"free\">Free</option><option value=\"pro\">Pro</option><option value=\"enterprise\">Enterprise</option>" }
     ],
+    "studio": {
+        "card": "<div class=\"w-full max-w-xs\"><x-components.select label=\"Plan\"><option value=\"free\">Free</option><option value=\"pro\" selected>Pro</option><option value=\"enterprise\">Enterprise</option></x-components.select></div>"
+    },
     "examples": [
         { "title": "Basic", "description": "A labeled select with a placeholder option.", "file": "basic.blade.php" }
     ]

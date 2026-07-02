@@ -13,7 +13,8 @@
         { "name": "slot", "description": "Call-to-action buttons or content shown below the description." }
     ],
     "studio": {
-        "defaults": { "title": "No results found", "description": "Try adjusting your filters or search terms." }
+        "defaults": { "title": "No results found", "description": "Try adjusting your filters or search terms." },
+        "card": "<x-components.empty-state title=\"No results found\" description=\"Try adjusting your filters or search terms.\" class=\"py-10\" />"
     },
     "usage": "Put call-to-action buttons in the default slot; override the icon with <x-slot:icon>…</x-slot:icon>.",
     "examples": [

@@ -42,7 +42,7 @@
     @keydown.window.cmd.k.prevent="openPalette()"
     @keydown.window.ctrl.k.prevent="openPalette()"
     @command-open.window="openPalette()"
-    class="inline-block"
+    {{ $attributes->twMerge('inline-block') }}
 >
     {{-- Trigger --}}
     <div @click="openPalette()">
@@ -62,13 +62,18 @@
         <div
             x-show="open"
             x-cloak
+            x-id="['dd-command']"
             class="fixed inset-0 z-50 flex items-start justify-center p-4 pt-[15vh]"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Command palette"
             @keydown.escape.window="open = false"
         >
             <div x-show="open" x-transition.opacity class="absolute inset-0 bg-black/50" @click="open = false"></div>
 
             <div
                 x-show="open"
+                x-trap.noscroll="open"
                 x-transition:enter="ease-out duration-200"
                 x-transition:enter-start="opacity-0 scale-95"
                 x-transition:enter-end="opacity-100 scale-100"
@@ -91,17 +96,25 @@
                         autocomplete="off"
                         autocorrect="off"
                         spellcheck="false"
+                        role="combobox"
+                        aria-expanded="true"
+                        aria-autocomplete="list"
+                        :aria-controls="$id('dd-command')"
+                        :aria-activedescendant="filtered.length ? $id('dd-command') + '-option-' + active : null"
                         class="h-12 w-full bg-transparent text-sm text-foreground outline-none placeholder:text-foreground/40"
                     />
                 </div>
 
-                <div x-ref="list" class="max-h-80 overflow-y-auto overflow-x-hidden p-1.5">
+                <div x-ref="list" :id="$id('dd-command')" role="listbox" class="max-h-80 overflow-y-auto overflow-x-hidden p-1.5">
                     <template x-for="(item, index) in filtered" :key="item.value">
                         <div>
                             <template x-if="showGroup(item, index)">
                                 <div class="px-2 pb-1 pt-2 text-xs font-medium text-foreground/40" x-text="item.group"></div>
                             </template>
                             <div
+                                :id="$id('dd-command') + '-option-' + index"
+                                role="option"
+                                :aria-selected="active === index"
                                 :data-active="active === index"
                                 @click="select(item)"
                                 @mousemove="active = index"
@@ -116,6 +129,22 @@
                     </template>
 
                     <div x-show="filtered.length === 0" class="px-3 py-8 text-center text-sm text-foreground/50">No results found.</div>
+                </div>
+
+                <div class="flex items-center gap-4 border-t border-foreground/10 px-3.5 py-2 text-[11px] text-foreground/40">
+                    <span class="flex items-center gap-1.5">
+                        <kbd class="inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-small border border-foreground/10 bg-secondary px-1 font-sans text-[10px] text-foreground/55">↑</kbd>
+                        <kbd class="inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-small border border-foreground/10 bg-secondary px-1 font-sans text-[10px] text-foreground/55">↓</kbd>
+                        Navigate
+                    </span>
+                    <span class="flex items-center gap-1.5">
+                        <kbd class="inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-small border border-foreground/10 bg-secondary px-1 font-sans text-[10px] text-foreground/55">↵</kbd>
+                        Select
+                    </span>
+                    <span class="flex items-center gap-1.5">
+                        <kbd class="inline-flex h-[18px] items-center justify-center rounded-small border border-foreground/10 bg-secondary px-1 font-sans text-[10px] text-foreground/55">esc</kbd>
+                        Close
+                    </span>
                 </div>
             </div>
         </div>

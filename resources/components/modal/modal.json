@@ -16,6 +16,7 @@
         { "name": "footer", "description": "Action row, usually buttons." }
     ],
     "studio": {
+        "card": "<x-components.modal><x-slot:trigger><x-components.button variant=\"outline\" size=\"sm\">Open modal</x-components.button></x-slot:trigger><x-slot:header>Confirm changes</x-slot:header><x-slot:content>Are you sure you want to save these changes?</x-slot:content></x-components.modal>",
         "container": "<div class=\"flex min-h-96 w-full items-center justify-center\">{{component}}</div>",
         "defaults": { "open": true },
         "height": "28rem"

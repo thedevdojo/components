@@ -48,14 +48,14 @@
 @php
     $topHighlightClasses = $topHighlight ? ' shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.3),inset_0_-1px_1px_0_rgba(0,0,0,0.3)] dark:shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.3),inset_0_-1px_1px_0_rgba(255,255,255,0.15)]' : '';
 
-    $primaryClasses = 'border-transparent no-underline bg-primary text-primary-foreground shadow-[0_1px_2px_hsl(var(--shadow-color)/0.25),inset_0_1px_0_rgba(255,255,255,0.12)] hover:bg-accent-hover hover:-translate-y-px hover:shadow-[0_4px_14px_color-mix(in_oklab,var(--accent)_40%,transparent)] focus-visible:ring-2 focus-visible:ring-primary/10 dark:focus-visible:ring-primary/20 focus-visible:ring-offset-2 focus-visible:ring-offset-background';
+    $primaryClasses = 'border-transparent no-underline bg-linear-to-b from-primary/90 via-primary/90 to-primary text-primary-foreground select-none hover:from-primary hover:via-primary hover:to-primary focus-visible:ring-2 focus-visible:ring-primary/10 dark:focus-visible:ring-primary/20 focus-visible:ring-offset-2 focus-visible:ring-offset-background' . $topHighlightClasses;
 
     switch ($variant ?? 'primary') {
         case 'primary':
             $typeClasses = $primaryClasses;
             break;
         case 'secondary':
-            $typeClasses = 'no-underline text-secondary-foreground bg-secondary border-line-strong hover:bg-elevated hover:border-[color-mix(in_oklab,var(--fg)_22%,transparent)] focus-visible:ring-2 focus-visible:ring-secondary/90 focus-visible:ring-offset-2 focus-visible:ring-offset-background';
+            $typeClasses = 'border-transparent no-underline text-secondary-foreground bg-secondary hover:bg-secondary/80 focus-visible:ring-2 focus-visible:ring-secondary/90 focus-visible:ring-offset-2 focus-visible:ring-offset-background';
             break;
         case 'destructive':
             $typeClasses = 'border-transparent no-underline bg-destructive focus-visible:ring-2 focus-visible:ring-destructive/30 focus-visible:ring-offset-2 focus-visible:ring-offset-background text-white hover:opacity-95' . $topHighlightClasses;
@@ -64,7 +64,7 @@
             $typeClasses = 'no-underline text-foreground bg-background hover:bg-secondary border-foreground/10 dark:border-foreground/15 focus-visible:ring-2 focus-visible:ring-secondary/90 focus-visible:ring-offset-2 focus-visible:ring-offset-background';
             break;
         case 'ghost':
-            $typeClasses = 'border-transparent no-underline text-muted hover:bg-elevated hover:text-foreground focus-visible:ring-2 focus-visible:ring-secondary/90 focus-visible:ring-offset-2 focus-visible:ring-offset-background';
+            $typeClasses = 'border-transparent no-underline text-foreground hover:bg-secondary focus-visible:ring-2 focus-visible:ring-secondary/90 focus-visible:ring-offset-2 focus-visible:ring-offset-background';
             break;
         case 'link':
             $typeClasses = 'border-transparent no-underline text-foreground hover:underline';

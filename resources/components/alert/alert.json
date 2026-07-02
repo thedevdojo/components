@@ -14,6 +14,7 @@
         { "name": "slot", "description": "Optional extra content below the title and description." }
     ],
     "studio": {
+        "card": "<div class=\"w-full max-w-sm\"><x-components.alert variant=\"info\" title=\"Heads up\" description=\"Your trial ends in 3 days.\" /></div>",
         "container": "<div class=\"w-full max-w-lg mx-auto\">{{component}}</div>",
         "defaults": { "title": "Heads up", "description": "This alert calls out something the user should notice." }
     },

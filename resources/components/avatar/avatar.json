@@ -16,6 +16,9 @@
     "slots": [
         { "name": "slot", "description": "Custom fallback content, shown when there's no src, initials or name." }
     ],
+    "studio": {
+        "card": "<div class=\"flex items-center gap-3\"><x-components.avatar name=\"Sarah Chen\" circle status=\"online\" /><x-components.avatar name=\"Marcus Reid\" circle /><x-components.avatar initials=\"TL\" circle /></div>"
+    },
     "examples": [
         { "title": "Sizes, photos & status", "description": "Photo, initials, or icon fallback — five sizes, circle or square, with an optional status dot.", "file": "sizes.blade.php" },
         { "title": "Colors", "description": "Deterministic soft colors, or auto to derive one from the name.", "file": "colors.blade.php" }

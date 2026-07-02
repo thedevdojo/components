@@ -1,6 +1,7 @@
 @props([
     'categories',
     'current' => null,
+    'currentGuide' => null,
     'title' => 'DevDojo Components',
 ])
 
@@ -15,6 +16,8 @@
             'group' => $component['category'],
         ])->values()->all();
     $baseUrl = rtrim(route('devdojo-components.showcase'), '/');
+
+    $faviconMark = rawurlencode('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 39 39"><path fill="{color}" d="M13.71 13.71v11.495h11.495V13.71zM0 27.504V39h11.496V27.504zM0 0v11.496h11.496V0z"/><path fill="{color}" fill-opacity=".25" d="M27.41 13.71v11.495h11.496V13.71zM13.701 27.504V39h11.496V27.504zM13.701 0v11.496h11.496V0z"/></svg>');
 @endphp
 
 <!DOCTYPE html>
@@ -24,15 +27,30 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ $title }}</title>
+    <meta name="description" content="Beautiful, accessible Blade + Alpine components for Laravel — published straight into your app, owned and customized by you.">
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
+
+    <link rel="icon" href="data:image/svg+xml,{{ str_replace(rawurlencode('{color}'), '%23111111', $faviconMark) }}" media="(prefers-color-scheme: light)">
+    <link rel="icon" href="data:image/svg+xml,{{ str_replace(rawurlencode('{color}'), '%23fafafa', $faviconMark) }}" media="(prefers-color-scheme: dark)">
 
     {{-- Set the theme before paint to avoid a flash of the wrong mode. --}}
     <script>
         (() => {
             const stored = localStorage.getItem('dd-theme');
             const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            if (stored === 'dark' || (!stored && prefersDark)) {
+            const dark = stored === 'dark' || (!stored && prefersDark);
+            if (dark) {
                 document.documentElement.classList.add('dark');
             }
+            // Keep the browser chrome (mobile address bar) in sync when the
+            // stored theme overrides the system preference.
+            window.ddSyncThemeColor = (isDark) => {
+                document.querySelectorAll('meta[name="theme-color"]').forEach(meta => {
+                    meta.content = isDark ? '#0a0a0a' : '#ffffff';
+                });
+            };
+            if (stored) { window.ddSyncThemeColor(dark); }
         })();
     </script>
 
@@ -46,103 +64,187 @@
         <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/focus@3.x.x/dist/cdn.min.js"></script>
         <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     @endif
+
+    <style>
+        /* Thin, quiet scrollbars that only appear while you're over the area. */
+        .studio-scroll {
+            scrollbar-width: thin;
+            scrollbar-color: transparent transparent;
+        }
+        .studio-scroll:hover,
+        .studio-scroll:focus-within {
+            scrollbar-color: color-mix(in oklab, var(--foreground) 20%, transparent) transparent;
+        }
+    </style>
 </head>
 
 <body class="bg-background text-foreground antialiased"
     x-data="{
         dark: document.documentElement.classList.contains('dark'),
         query: '',
+        mobileNav: false,
         toggle() {
             this.dark = !this.dark;
             document.documentElement.classList.toggle('dark', this.dark);
             localStorage.setItem('dd-theme', this.dark ? 'dark' : 'light');
+            window.ddSyncThemeColor(this.dark);
             window.dispatchEvent(new CustomEvent('dd-theme-changed', { detail: { dark: this.dark } }));
         },
         matches(haystack) {
             return this.query.trim() === '' || haystack.toLowerCase().includes(this.query.trim().toLowerCase());
+        },
+        matchesAny(haystacks) {
+            return this.query.trim() === '' || haystacks.some(haystack => this.matches(haystack));
         }
     }"
-    @command-select.window="window.location = '{{ $baseUrl }}/' + $event.detail.value">
+    @command-select.window="window.location = '{{ $baseUrl }}/' + $event.detail.value"
+    @keydown.escape.window="mobileNav = false"
+    @keydown.window="if ($event.key === '/' && !['INPUT', 'TEXTAREA', 'SELECT'].includes($event.target.tagName) && ! $event.target.isContentEditable && $refs.filter?.offsetParent) { $event.preventDefault(); $refs.filter.focus(); }">
 
-    {{-- Toast container + ⌘K palette (single instances for the whole page). --}}
+    <a href="#studio-main"
+        class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-medium focus:bg-primary focus:px-3.5 focus:py-2 focus:text-sm focus:font-medium focus:text-primary-foreground focus:outline-none">
+        Skip to content
+    </a>
+
+    {{-- Toast container + ⌘K palette (single instances for the whole page).
+         The palette is opened via ⌘K / the window event only, so its trigger
+         wrapper is hidden — an empty inline-block would still add a line box
+         above the mobile top bar. --}}
     <x-components.toast />
-    <x-components.command :items="$paletteItems" placeholder="Search components…">
+    <x-components.command :items="$paletteItems" placeholder="Search components…" class="hidden">
         <x-slot:trigger><span class="hidden"></span></x-slot:trigger>
     </x-components.command>
 
     {{-- Mobile top bar — the desktop layout uses the sidebar instead. --}}
     <div class="sticky top-0 z-40 flex items-center justify-between gap-3 border-b border-foreground/10 bg-background/80 px-4 py-3 backdrop-blur-md lg:hidden">
-        <a href="{{ $baseUrl }}" class="flex items-center gap-2.5">
-            <span class="flex h-7 w-7 items-center justify-center rounded-medium bg-primary text-primary-foreground shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.3)]">
-                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m7 11 2-2-2-2" /><path d="M11 13h4" /><rect x="3" y="3" width="18" height="18" rx="2" /></svg>
-            </span>
-            <p class="text-sm font-semibold">Components</p>
+        <a href="{{ $baseUrl }}" class="flex items-center gap-2.5 rounded-medium text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring">
+            <svg class="size-5" viewBox="0 0 39 39" fill="none" aria-hidden="true">
+                <path fill="currentColor" d="M13.71 13.71v11.495h11.495V13.71zM0 27.504V39h11.496V27.504zM0 0v11.496h11.496V0z" />
+                <path fill="currentColor" fill-opacity=".2" d="M27.41 13.71v11.495h11.496V13.71zM13.701 27.504V39h11.496V27.504zM13.701 0v11.496h11.496V0z" />
+            </svg>
+            <p class="text-sm font-semibold tracking-tight">Components</p>
         </a>
-        <button @click="toggle()" type="button" aria-label="Toggle theme"
-            class="inline-flex h-9 w-9 items-center justify-center rounded-medium border border-foreground/10 bg-card text-foreground/70 transition hover:bg-secondary hover:text-foreground">
-            <svg x-show="!dark" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" /></svg>
-            <svg x-show="dark" x-cloak class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" /></svg>
-        </button>
+        <div class="flex items-center gap-2">
+            <button @click="toggle()" type="button" aria-label="Toggle theme"
+                class="inline-flex h-9 w-9 items-center justify-center rounded-medium border border-foreground/10 bg-card text-foreground/70 outline-none transition hover:bg-secondary hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring active:scale-95">
+                <svg x-show="!dark" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" /></svg>
+                <svg x-show="dark" x-cloak class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" /></svg>
+            </button>
+            <button @click="mobileNav = true" type="button" aria-label="Open navigation"
+                class="inline-flex h-9 w-9 items-center justify-center rounded-medium border border-foreground/10 bg-card text-foreground/70 outline-none transition hover:bg-secondary hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring active:scale-95">
+                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h16" /></svg>
+            </button>
+        </div>
     </div>
 
-    <div class="mx-auto flex w-full max-w-[88rem] gap-8 px-4 sm:px-6 lg:gap-10 lg:px-8">
-
-        {{-- ===================== SIDEBAR ===================== --}}
-        <aside class="sticky top-0 hidden h-screen w-64 shrink-0 flex-col overflow-y-auto pt-10 pb-8 lg:flex">
-            <div class="flex items-center justify-between px-2.5">
-                <a href="{{ $baseUrl }}" class="flex items-center gap-2.5">
-                    <span class="flex h-8 w-8 items-center justify-center rounded-medium bg-primary text-primary-foreground shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.3)]">
-                        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m7 11 2-2-2-2" /><path d="M11 13h4" /><rect x="3" y="3" width="18" height="18" rx="2" /></svg>
-                    </span>
+    {{-- Mobile navigation drawer --}}
+    <div x-show="mobileNav" x-cloak x-trap.inert.noscroll="mobileNav" class="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true" aria-label="Navigation">
+        <div x-show="mobileNav" @click="mobileNav = false"
+            x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+            x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+            class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
+        <div x-show="mobileNav"
+            x-transition:enter="transition ease-out duration-200" x-transition:enter-start="-translate-x-full" x-transition:enter-end="translate-x-0"
+            x-transition:leave="transition ease-in duration-150" x-transition:leave-start="translate-x-0" x-transition:leave-end="-translate-x-full"
+            x-effect="if (mobileNav) $nextTick(() => {
+                const active = $el.querySelector('[aria-current=page]');
+                if (! active) return;
+                const offset = active.getBoundingClientRect().top - $el.getBoundingClientRect().top + $el.scrollTop;
+                if (offset > $el.clientHeight - 96) { $el.scrollTop = offset - $el.clientHeight / 2; }
+            })"
+            class="studio-scroll absolute inset-y-0 left-0 flex w-80 max-w-[85vw] flex-col overflow-y-auto border-r border-foreground/10 bg-background px-4 pb-8 pt-4">
+            <div class="flex items-center justify-between">
+                <a href="{{ $baseUrl }}" class="flex items-center gap-2.5 px-2.5 text-foreground">
+                    <svg class="size-5" viewBox="0 0 39 39" fill="none" aria-hidden="true">
+                        <path fill="currentColor" d="M13.71 13.71v11.495h11.495V13.71zM0 27.504V39h11.496V27.504zM0 0v11.496h11.496V0z" />
+                        <path fill="currentColor" fill-opacity=".2" d="M27.41 13.71v11.495h11.496V13.71zM13.701 27.504V39h11.496V27.504zM13.701 0v11.496h11.496V0z" />
+                    </svg>
                     <p class="text-sm font-semibold tracking-tight">Components</p>
                 </a>
-                <button @click="toggle()" type="button" aria-label="Toggle theme"
-                    class="inline-flex h-8 w-8 items-center justify-center rounded-medium border border-foreground/10 bg-card text-foreground/70 transition hover:bg-secondary hover:text-foreground">
-                    <svg x-show="!dark" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" /></svg>
-                    <svg x-show="dark" x-cloak class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" /></svg>
+                <button @click="mobileNav = false" type="button" aria-label="Close navigation"
+                    class="inline-flex h-8 w-8 items-center justify-center rounded-medium text-foreground/50 outline-none transition hover:bg-secondary hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring">
+                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12" /></svg>
                 </button>
             </div>
 
-            <label class="mt-6 flex items-center gap-2 rounded-medium border border-foreground/10 bg-card px-2.5 py-1.5 text-sm text-foreground/70 focus-within:ring-2 focus-within:ring-ring">
+            <label class="mt-4 flex items-center gap-2 rounded-medium border border-foreground/10 bg-card px-2.5 py-1.5 text-sm text-foreground/70 transition-colors focus-within:border-foreground/20 focus-within:ring-2 focus-within:ring-ring">
                 <svg class="h-4 w-4 shrink-0 text-foreground/40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /></svg>
                 <input type="text" x-model="query" placeholder="Filter…"
                     class="w-full border-none bg-transparent p-0 text-sm text-foreground placeholder:text-foreground/40 focus:outline-none focus:ring-0" />
-                <kbd class="rounded-small border border-foreground/10 bg-secondary px-1.5 font-mono text-[10px] text-foreground/50">⌘K</kbd>
             </label>
 
-            <nav class="mt-6 flex flex-col gap-6">
-                @foreach ($categories as $category => $components)
-                    <div>
-                        <p class="px-2.5 text-[0.7rem] font-medium uppercase tracking-wider text-foreground/40">{{ $category }}</p>
-                        <div class="mt-1.5 flex flex-col gap-0.5">
-                            @foreach ($components as $component)
-                                <a href="{{ $baseUrl }}/{{ $component['name'] }}"
-                                    x-show="matches(@js($component['label'].' '.$component['name']))"
-                                    @class([
-                                        'rounded-medium px-2.5 py-1.5 text-sm font-medium transition',
-                                        'bg-secondary text-foreground' => $current === $component['name'],
-                                        'text-foreground/60 hover:bg-secondary/60 hover:text-foreground' => $current !== $component['name'],
-                                    ])>{{ $component['label'] }}</a>
-                            @endforeach
-                        </div>
-                    </div>
-                @endforeach
-            </nav>
+            @include('devdojo-components::components.studio.nav')
+        </div>
+    </div>
+
+    <div class="mx-auto flex w-full max-w-[88rem] gap-8 px-4 sm:px-6 lg:gap-10 lg:px-6">
+
+        {{-- ===================== SIDEBAR ===================== --}}
+        <aside aria-label="Sidebar" class="studio-scroll sticky top-0 hidden h-screen w-60 shrink-0 flex-col overflow-y-auto pb-6 pt-5 lg:flex"
+            x-init="(() => {
+                const active = $el.querySelector('[aria-current=page]');
+                if (! active) return;
+                const offset = active.getBoundingClientRect().top - $el.getBoundingClientRect().top;
+                if (offset > $el.clientHeight - 96) { $el.scrollTop = offset - $el.clientHeight / 2; }
+            })()">
+            <div class="flex items-center justify-between px-2">
+                <a href="{{ $baseUrl }}" class="flex items-center gap-2 rounded-medium text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                    <svg class="size-[18px]" viewBox="0 0 39 39" fill="none" aria-hidden="true">
+                        <path fill="currentColor" d="M13.71 13.71v11.495h11.495V13.71zM0 27.504V39h11.496V27.504zM0 0v11.496h11.496V0z" />
+                        <path fill="currentColor" fill-opacity=".2" d="M27.41 13.71v11.495h11.496V13.71zM13.701 27.504V39h11.496V27.504zM13.701 0v11.496h11.496V0z" />
+                    </svg>
+                    <p class="text-sm font-semibold tracking-tight">Components</p>
+                </a>
+                <button @click="toggle()" type="button" aria-label="Toggle theme"
+                    class="inline-flex h-7 w-7 items-center justify-center rounded-medium border border-foreground/10 bg-card text-foreground/70 outline-none transition hover:bg-secondary hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring active:scale-95">
+                    <svg x-show="!dark" class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" /></svg>
+                    <svg x-show="dark" x-cloak class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" /></svg>
+                </button>
+            </div>
+
+            <label class="mt-4 flex items-center gap-2 rounded-medium border border-foreground/10 bg-card px-2 py-1.5 text-[13px] text-foreground/70 transition-colors focus-within:border-foreground/20 focus-within:ring-2 focus-within:ring-ring">
+                <svg class="h-3.5 w-3.5 shrink-0 text-foreground/40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /></svg>
+                <input type="text" x-model="query" x-ref="filter" placeholder="Filter…"
+                    @keydown.escape.stop="query = ''; $el.blur()"
+                    class="w-full border-none bg-transparent p-0 text-[13px] text-foreground placeholder:text-foreground/40 focus:outline-none focus:ring-0" />
+                <kbd class="rounded-small border border-foreground/10 bg-secondary px-1.5 font-mono text-[10px] text-foreground/50">/</kbd>
+            </label>
+
+            @include('devdojo-components::components.studio.nav')
 
             <a href="https://devdojo.com" target="_blank" rel="noreferrer"
-                class="mt-auto flex items-center gap-1.5 px-2.5 pt-8 text-sm text-foreground/50 transition hover:text-foreground">
+                class="mt-auto flex items-center gap-1.5 rounded-medium px-2 pt-6 text-[13px] text-foreground/50 outline-none transition hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring">
                 devdojo.com
                 <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10" /><path d="M7 17 17 7" /></svg>
             </a>
         </aside>
 
         {{-- ===================== MAIN ===================== --}}
-        <main class="min-w-0 flex-1 py-10 lg:py-14">
+        <main id="studio-main" class="min-w-0 flex-1 py-6 lg:py-7">
             {{ $slot }}
         </main>
     </div>
 
     <script>
+        // Instant-feel navigation: prefetch same-origin pages the moment a link
+        // is hovered or touched, so the real click hits a warm cache.
+        (() => {
+            const seen = new Set();
+            const handle = (event) => {
+                const link = event.target.closest('a[href]');
+                if (! link || link.origin !== location.origin || link.target === '_blank' || link.hasAttribute('download')) return;
+                const url = link.href.split('#')[0];
+                if (url === location.href.split('#')[0] || seen.has(url)) return;
+                seen.add(url);
+                const hint = document.createElement('link');
+                hint.rel = 'prefetch';
+                hint.href = url;
+                document.head.appendChild(hint);
+            };
+            document.addEventListener('mouseover', handle, { passive: true });
+            document.addEventListener('touchstart', handle, { passive: true });
+        })();
+
         // Shared copy helper for every code block and install snippet.
         window.ddCopy = function (text) {
             if (navigator.clipboard) {
@@ -167,14 +269,16 @@
             const highlight = async () => {
                 for (const pre of document.querySelectorAll('pre[data-studio-code]')) {
                     const code = pre.dataset.rawCode ?? pre.querySelector('code')?.textContent ?? '';
+                    const lang = pre.dataset.lang || 'blade';
                     pre.dataset.rawCode = code;
-                    const html = await codeToHtml(code, { lang: 'blade', theme: theme() });
+                    const html = await codeToHtml(code, { lang, theme: theme() });
                     const replacement = document.createElement('div');
                     replacement.innerHTML = html;
                     const shikiPre = replacement.querySelector('pre');
                     shikiPre.className = pre.className;
                     shikiPre.dataset.studioCode = '';
                     shikiPre.dataset.rawCode = code;
+                    shikiPre.dataset.lang = lang;
                     shikiPre.style.backgroundColor = 'transparent';
                     pre.replaceWith(shikiPre);
                 }

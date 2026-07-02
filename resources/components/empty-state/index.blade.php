@@ -4,7 +4,7 @@
 ])
 
 <div {{ $attributes->twMerge('flex w-full flex-col items-center justify-center gap-0 rounded-large border border-dashed border-border px-6 py-20 text-center') }}>
-    <div class="flex size-14 items-center justify-center rounded-large bg-elevated text-accent">
+    <div class="flex size-14 items-center justify-center rounded-large bg-secondary text-muted-foreground">
         @if (isset($icon))
             {{ $icon }}
         @else
@@ -17,7 +17,7 @@
     @endif
 
     @if ($description)
-        <p class="mt-1.5 max-w-sm text-sm text-muted text-pretty">{{ $description }}</p>
+        <p class="mt-1.5 max-w-sm text-sm text-muted-foreground text-pretty">{{ $description }}</p>
     @endif
 
     @if (trim($slot ?? '') !== '')

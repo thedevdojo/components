@@ -48,7 +48,7 @@
                     @endisset
                     @if ($closeButton ?? true)
                         <div class="absolute right-0 top-0 z-50 hidden pr-4 pt-4 sm:block">
-                            <button class="rounded-small bg-transparent p-1 text-foreground/30 transition hover:bg-elevated hover:text-foreground/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-foreground/20" @click="modalOpen = false" type="button">
+                            <button class="rounded-small bg-transparent p-1 text-foreground/30 transition hover:bg-secondary hover:text-foreground/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-foreground/20" @click="modalOpen = false" type="button">
                                 <span class="sr-only">Close</span>
                                 <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
                                     <path d="M6 18 18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round"></path>

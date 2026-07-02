@@ -17,6 +17,7 @@
         { "name": "slot", "description": "Fallback menu content when no `menu` slot is given.", "default": "<a href=\"#\" class=\"block rounded-medium px-3 py-2 text-sm text-foreground/80 hover:bg-secondary\">Profile</a><a href=\"#\" class=\"block rounded-medium px-3 py-2 text-sm text-foreground/80 hover:bg-secondary\">Settings</a><a href=\"#\" class=\"block rounded-medium px-3 py-2 text-sm text-foreground/80 hover:bg-secondary\">Sign out</a>" }
     ],
     "studio": {
+        "card": "<x-components.dropdown><x-slot:trigger><x-components.button variant=\"outline\" size=\"sm\">Options</x-components.button></x-slot:trigger><a href=\"#\" class=\"block rounded-medium px-3 py-2 text-sm text-foreground/80 hover:bg-secondary\">Profile</a><a href=\"#\" class=\"block rounded-medium px-3 py-2 text-sm text-foreground/80 hover:bg-secondary\">Settings</a><a href=\"#\" class=\"block rounded-medium px-3 py-2 text-sm text-foreground/80 hover:bg-secondary\">Sign out</a></x-components.dropdown>",
         "container": "<div class=\"flex min-h-96 w-full items-center justify-center\">{{component}}</div>"
     },
     "examples": [

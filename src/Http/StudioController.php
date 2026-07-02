@@ -22,6 +22,22 @@ class StudioController
     }
 
     /**
+     * Render a Getting Started guide page (Introduction, Installation, …).
+     */
+    public function guide(string $page)
+    {
+        $content = "devdojo-components::studio.guides.{$page}";
+
+        abort_unless(view()->exists($content), 404);
+
+        return view('devdojo-components::studio.guide', [
+            'categories' => Components::byCategory(),
+            'page' => $page,
+            'content' => $content,
+        ]);
+    }
+
+    /**
      * A component's documentation + playground page.
      */
     public function show(Request $request, string $name)

@@ -16,6 +16,7 @@
         { "name": "slot", "description": "Fallback panel content when no `content` slot is given.", "default": "Popover content goes here." }
     ],
     "studio": {
+        "card": "<x-components.popover><x-slot:trigger><x-components.button variant=\"outline\" size=\"sm\">Open popover</x-components.button></x-slot:trigger><x-slot:content>This popover panel is anchored to its trigger.</x-slot:content></x-components.popover>",
         "container": "<div class=\"flex min-h-96 w-full items-center justify-center\">{{component}}</div>"
     },
     "examples": [
