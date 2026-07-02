@@ -5,6 +5,7 @@ namespace DevDojo\Components;
 use DevDojo\Components\Console\AddCommand;
 use DevDojo\Components\Console\InstallCommand;
 use DevDojo\Components\Console\ListCommand;
+use DevDojo\Components\Http\StudioController;
 use DevDojo\Components\Livewire\ComponentCard;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
@@ -30,7 +31,7 @@ class ComponentsServiceProvider extends ServiceProvider
         $this->registerTailwindMergeFallbacks();
         $this->registerPreviewComponents();
         $this->registerLivewireComponents();
-        $this->registerShowcase();
+        $this->registerStudio();
         $this->registerPublishing();
 
         if ($this->app->runningInConsole()) {
@@ -73,9 +74,9 @@ class ComponentsServiceProvider extends ServiceProvider
     }
 
     /**
-     * Register the local-only showcase gallery route and its views.
+     * Register the local-only Component Studio routes and views.
      */
-    protected function registerShowcase(): void
+    protected function registerStudio(): void
     {
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'devdojo-components');
 
@@ -83,14 +84,20 @@ class ComponentsServiceProvider extends ServiceProvider
             return;
         }
 
-        // The showcase needs the session + CSRF stack (the "web" group) so the
+        // The studio needs the session + CSRF stack (the "web" group) so the
         // Livewire "add" buttons can post back without a 419 "page expired".
         Route::middleware(config('components.showcase.middleware', ['web']))
-            ->get(config('components.showcase.route', '/components'), function () {
-                return view('devdojo-components::showcase', [
-                    'categories' => Components::byCategory(),
-                ]);
-            })->name('devdojo-components.showcase');
+            ->prefix(config('components.showcase.route', '/components'))
+            ->group(function (): void {
+                Route::get('/', [StudioController::class, 'index'])
+                    ->name('devdojo-components.showcase');
+                Route::get('/{name}/preview', [StudioController::class, 'preview'])
+                    ->where('name', '[a-z0-9\-]+')
+                    ->name('devdojo-components.preview');
+                Route::get('/{name}', [StudioController::class, 'show'])
+                    ->where('name', '[a-z0-9\-]+')
+                    ->name('devdojo-components.show');
+            });
     }
 
     /**

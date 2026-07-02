@@ -51,6 +51,13 @@ return [
          | can post back without triggering a 419 "page expired" response.
          */
         'middleware' => ['web'],
+
+        /*
+         | The Vite entry points loaded by the studio pages and the preview
+         | iframe. Point this at whatever stylesheet compiles your Tailwind
+         | theme (it must include the DevDojo Components tokens).
+         */
+        'assets' => ['resources/css/app.css'],
     ],
 
 ];
