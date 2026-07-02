@@ -13,8 +13,7 @@
         { "name": "loading", "type": "boolean", "default": false, "description": "Force the loading spinner on." }
     ],
     "slots": [
-        { "name": "slot", "description": "The button label.", "default": "Button" },
-        { "name": "icon", "description": "Optional leading icon markup.", "default": "" }
+        { "name": "slot", "description": "The button label.", "default": "Button" }
     ],
     "examples": [
         { "title": "Variants", "description": "Six visual styles for every intent.", "file": "variants.blade.php" },
