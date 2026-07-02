@@ -205,7 +205,7 @@
                     </div>
                 </div>
                 <div class="flex justify-center bg-[radial-gradient(var(--color-border)_1px,transparent_1px)] [background-size:16px_16px] p-4">
-                    <iframe x-ref="stage" title="{{ $meta['label'] }} playground" :src="previewSrc()"
+                    <iframe x-ref="stage" title="{{ $meta['label'] }} playground" :src="stageSrc"
                         class="rounded-small border border-foreground/10 bg-background transition-all"
                         :style="'width: ' + stageWidth + '; height: ' + height"></iframe>
                 </div>
@@ -260,6 +260,7 @@
                 copied: false,
                 stageDark: document.documentElement.classList.contains('dark'),
                 stageWidth: '100%',
+                stageSrc: '',
                 height: config.height,
                 _initial: JSON.parse(JSON.stringify({ attrs: config.attrs, slots: config.slots })),
                 _timer: null,
@@ -273,6 +274,7 @@
                     }
                     this._initial = JSON.parse(JSON.stringify({ attrs: this.attrs, slots: this.slots }));
                     this.generateCode();
+                    this.stageSrc = this.previewSrc();
                     this.$watch('stageDark', () => this.refresh(true));
                 },
 
@@ -285,7 +287,7 @@
 
                 refresh() {
                     clearTimeout(this._timer);
-                    this.$refs.stage.src = this.previewSrc();
+                    this.stageSrc = this.previewSrc();
                 },
 
                 previewSrc() {
