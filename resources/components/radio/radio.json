@@ -2,6 +2,7 @@
     "name": "radio",
     "label": "Radio",
     "description": "A radio control matching the checkbox API, with label, description, and clickable-row layouts.",
+    "example": "<x-radio name=\"plan\" label=\"Starter\" description=\"For side projects.\" />",
     "category": "Forms",
     "dependencies": [],
     "props": [

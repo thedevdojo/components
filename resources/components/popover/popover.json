@@ -2,6 +2,7 @@
     "name": "popover",
     "label": "Popover",
     "description": "A teleported floating panel that follows its trigger on scroll and resize. The same engine that powers the dropdown, with full control over placement.",
+    "example": "<x-popover position=\"bottom\" align=\"center\">\n    <x-slot:trigger>\n        <x-button variant=\"outline\">Open</x-button>\n    </x-slot:trigger>\n    <x-slot:content>\n        <p class=\"text-sm text-foreground/70\">Positioned below the trigger.</p>\n    </x-slot:content>\n</x-popover>",
     "category": "Overlays",
     "dependencies": [],
     "props": [

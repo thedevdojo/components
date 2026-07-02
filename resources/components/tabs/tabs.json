@@ -2,6 +2,7 @@
     "name": "tabs",
     "label": "Tabs",
     "description": "A segmented tab control for switching between panels of content. Compose with <x-tabs.list>, <x-tabs.tab> and <x-tabs.panel>.",
+    "example": "<x-tabs>\n    <x-tabs.list>\n        <x-tabs.tab tab=\"account\">Account</x-tabs.tab>\n        <x-tabs.tab tab=\"password\">Password</x-tabs.tab>\n    </x-tabs.list>\n    <x-tabs.panel tab=\"account\">Account settings</x-tabs.panel>\n    <x-tabs.panel tab=\"password\">Password settings</x-tabs.panel>\n</x-tabs>",
     "category": "Layout",
     "dependencies": [],
     "props": [

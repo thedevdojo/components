@@ -2,6 +2,7 @@
     "name": "checkbox",
     "label": "Checkbox",
     "description": "An accessible checkbox with label, description, custom icon, and clickable-card layouts. Works with wire:model.",
+    "example": "<x-checkbox label=\"Email notifications\" description=\"Get notified when something happens.\" />",
     "category": "Forms",
     "dependencies": [],
     "props": [

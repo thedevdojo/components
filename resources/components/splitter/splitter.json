@@ -2,6 +2,7 @@
     "name": "splitter",
     "label": "Splitter",
     "description": "A draggable split layout with resizable panes. Lay panes out horizontally or vertically with a slim, grabbable gutter between them. Nest splitters for complex layouts.",
+    "example": "<x-splitter class=\"h-72\" :min-size=\"80\">\n    <x-splitter.pane :size=\"35\">Sidebar</x-splitter.pane>\n    <x-splitter.pane :size=\"65\">Content</x-splitter.pane>\n</x-splitter>",
     "category": "Layout",
     "dependencies": [],
     "props": [

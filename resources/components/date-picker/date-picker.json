@@ -2,6 +2,7 @@
     "name": "date-picker",
     "label": "Date Picker",
     "description": "A calendar date picker bound to a read-only input, with month navigation, today/selected highlighting and several display formats. The calendar is teleported so it never clips. Works with wire:model.",
+    "example": "<x-date-picker label=\"Departure date\" />",
     "category": "Forms",
     "dependencies": ["label"],
     "props": [

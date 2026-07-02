@@ -2,6 +2,7 @@
     "name": "infinite-canvas",
     "label": "Infinite Canvas",
     "description": "A pannable, zoomable infinite surface. Scroll or trackpad to glide with momentum, dispatch events to zoom or recenter, and drop any content in the middle. Optional dotted background.",
+    "example": "<x-infinite-canvas :scale=\"100\" dot-pattern>\n    <div class=\"rounded-large border border-foreground/10 bg-background px-6 py-4\">\n        Pan around me\n    </div>\n</x-infinite-canvas>",
     "category": "Layout",
     "dependencies": [],
     "props": [

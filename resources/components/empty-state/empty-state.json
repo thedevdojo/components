@@ -2,6 +2,7 @@
     "name": "empty-state",
     "label": "Empty State",
     "description": "A friendly placeholder for when there's no data yet — an icon, title, description and an optional action. Pass an <x-slot:icon> to customize the glyph.",
+    "example": "<x-empty-state title=\"No projects yet\" description=\"Create your first project to get started.\">\n    <x-button size=\"sm\">New project</x-button>\n</x-empty-state>",
     "category": "Display",
     "dependencies": [],
     "props": [

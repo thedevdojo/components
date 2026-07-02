@@ -2,6 +2,7 @@
     "name": "command",
     "label": "Command Palette",
     "description": "A ⌘K / Ctrl+K command palette with fuzzy search, grouped items, keyboard navigation and a teleported overlay. Selecting an item dispatches a command-select event.",
+    "example": "<x-command :items=\"$items\" />",
     "category": "Overlays",
     "dependencies": [],
     "props": [

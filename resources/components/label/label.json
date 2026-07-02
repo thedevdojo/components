@@ -2,6 +2,7 @@
     "name": "label",
     "label": "Label",
     "description": "An accessible form label that pairs with inputs, checkboxes, and other controls.",
+    "example": "<x-label for=\"email\">Email address</x-label>",
     "category": "Forms",
     "dependencies": [],
     "props": [

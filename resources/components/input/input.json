@@ -2,6 +2,7 @@
     "name": "input",
     "label": "Input",
     "description": "A text input with an optional label and automatic validation error display for Livewire and request errors.",
+    "example": "<x-input label=\"Email address\" type=\"email\" placeholder=\"you@example.com\" />",
     "category": "Forms",
     "dependencies": ["label"],
     "props": [

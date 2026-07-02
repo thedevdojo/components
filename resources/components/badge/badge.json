@@ -2,6 +2,7 @@
     "name": "badge",
     "label": "Badge",
     "description": "A small label for status, counts and categories. Solid, soft status and outline variants in three sizes, with an optional icon and pill shape.",
+    "example": "<x-badge variant=\"success\">Verified</x-badge>",
     "category": "Display",
     "dependencies": [],
     "props": [

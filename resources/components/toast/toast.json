@@ -2,6 +2,7 @@
     "name": "toast",
     "label": "Toast",
     "description": "A global notification stack with progress bars, hover-to-pause, and four types. Trigger from JS, Blade sessions, or Livewire events.",
+    "example": "{{-- Place once near the end of your layout --}}\n<x-toast />\n\n<x-button x-on:click=\"window.toast('Saved successfully!', 'success')\">\n    Show toast\n</x-button>",
     "category": "Feedback",
     "dependencies": [],
     "props": [

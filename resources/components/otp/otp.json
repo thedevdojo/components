@@ -2,6 +2,7 @@
     "name": "otp",
     "label": "OTP Input",
     "description": "A segmented one-time-code input with auto-advance, backspace and arrow-key navigation, and paste-to-fill. Works with wire:model or a plain form field, and can fire an event when complete.",
+    "example": "<x-otp :length=\"6\" />",
     "category": "Forms",
     "dependencies": [],
     "props": [

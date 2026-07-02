@@ -2,6 +2,7 @@
     "name": "skeleton",
     "label": "Skeleton",
     "description": "A pulsing placeholder for content that is still loading. Size it with utility classes, render a circle, or stack several text lines.",
+    "example": "<x-skeleton :lines=\"3\" />",
     "category": "Feedback",
     "dependencies": [],
     "props": [

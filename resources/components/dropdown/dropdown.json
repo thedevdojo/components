@@ -2,6 +2,7 @@
     "name": "dropdown",
     "label": "Dropdown",
     "description": "A click-to-open menu anchored to its trigger, with configurable position, alignment, and gap.",
+    "example": "<x-dropdown>\n    <x-slot:trigger>\n        <x-button variant=\"outline\">Options</x-button>\n    </x-slot:trigger>\n    <x-slot:menu>\n        <a href=\"#\" class=\"block rounded-small px-3 py-1.5 text-sm hover:bg-secondary\">Profile</a>\n        <a href=\"#\" class=\"block rounded-small px-3 py-1.5 text-sm hover:bg-secondary\">Settings</a>\n    </x-slot:menu>\n</x-dropdown>",
     "category": "Overlays",
     "dependencies": [],
     "props": [

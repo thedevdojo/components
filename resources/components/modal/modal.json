@@ -2,6 +2,7 @@
     "name": "modal",
     "label": "Modal",
     "description": "An accessible, teleported dialog with focus trapping, header/content/footer slots, and event-driven open/close.",
+    "example": "<x-modal>\n    <x-slot:trigger>\n        <x-button>Open modal</x-button>\n    </x-slot:trigger>\n    <x-slot:header>Delete project</x-slot:header>\n    <x-slot:content>\n        <p class=\"text-foreground/70\">This action cannot be undone.</p>\n    </x-slot:content>\n    <x-slot:footer>\n        <x-button variant=\"destructive\" x-on:click=\"modalOpen = false\">Delete</x-button>\n    </x-slot:footer>\n</x-modal>",
     "category": "Overlays",
     "dependencies": ["button"],
     "props": [

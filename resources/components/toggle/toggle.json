@@ -2,6 +2,7 @@
     "name": "toggle",
     "label": "Toggle",
     "description": "An animated switch control for boolean settings, with label, description, and three sizes. Works with wire:model.",
+    "example": "<x-toggle label=\"Public profile\" description=\"Anyone can view your page.\" />",
     "category": "Forms",
     "dependencies": [],
     "props": [

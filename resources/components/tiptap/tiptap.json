@@ -2,6 +2,7 @@
     "name": "tiptap",
     "label": "Tiptap Editor",
     "description": "A rich-text WYSIWYG editor with a configurable toolbar (headings, lists, links, code) built on Tiptap. Works with wire:model. Lazy-loads its bundle on demand.",
+    "example": "<x-tiptap wire:model=\"content\" />",
     "category": "Editors",
     "dependencies": [],
     "assets": true,

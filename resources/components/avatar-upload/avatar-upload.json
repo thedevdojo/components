@@ -2,6 +2,7 @@
     "name": "avatar-upload",
     "label": "Avatar Upload",
     "description": "A circular avatar picker with a built-in crop-and-resize modal. Click the circle to choose a JPG or PNG, position it, and the cropped image syncs to a Livewire property.",
+    "example": "<x-avatar-upload :size=\"20\" />",
     "category": "Forms",
     "dependencies": [],
     "props": [

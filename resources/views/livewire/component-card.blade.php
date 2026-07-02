@@ -1,4 +1,4 @@
-<div class="self-start">
+<div class="self-start shrink-0">
     @if ($published)
         <div class="relative flex items-center gap-1" x-data="{ menu: false }">
             <span class="inline-flex items-center gap-1.5 rounded-md border border-green-500/20 bg-green-500/10 px-2.5 py-1.5 font-mono text-xs font-medium text-green-600 dark:text-green-400">

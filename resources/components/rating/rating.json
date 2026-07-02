@@ -2,6 +2,7 @@
     "name": "rating",
     "label": "Rating",
     "description": "An interactive star rating with hover preview and click-to-set (click the current value again to clear). Read-only mode for display. Works with wire:model or a plain form field.",
+    "example": "<x-rating :value=\"4\" />",
     "category": "Forms",
     "dependencies": [],
     "props": [

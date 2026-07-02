@@ -2,6 +2,7 @@
     "name": "breadcrumbs",
     "label": "Breadcrumbs",
     "description": "A navigation trail showing the path to the current page, with chevron separators added automatically. Compose with <x-breadcrumbs.item>.",
+    "example": "<x-breadcrumbs>\n    <x-breadcrumbs.item href=\"#\">Home</x-breadcrumbs.item>\n    <x-breadcrumbs.item href=\"#\">Projects</x-breadcrumbs.item>\n    <x-breadcrumbs.item current>Settings</x-breadcrumbs.item>\n</x-breadcrumbs>",
     "category": "Navigation",
     "dependencies": [],
     "props": [],

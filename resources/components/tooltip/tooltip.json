@@ -2,6 +2,7 @@
     "name": "tooltip",
     "label": "Tooltip",
     "description": "A lightweight, pure-Alpine tooltip that appears on hover or focus, with four positions and an optional arrow.",
+    "example": "<x-tooltip content=\"Top tooltip\" position=\"top\">\n    <x-button variant=\"secondary\">Hover me</x-button>\n</x-tooltip>",
     "category": "Overlays",
     "dependencies": [],
     "props": [

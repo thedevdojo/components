@@ -2,6 +2,7 @@
     "name": "accordion",
     "label": "Accordion",
     "description": "A set of stacked, collapsible sections. Expand any number of items, or set `exclusive` to keep only one open. Pairs with <x-accordion.item>.",
+    "example": "<x-accordion>\n    <x-accordion.item title=\"Is it accessible?\" open>\n        Yes. Each header is a real button.\n    </x-accordion.item>\n    <x-accordion.item title=\"Is it animated?\">\n        Yes — with a plugin-free CSS animation.\n    </x-accordion.item>\n</x-accordion>",
     "category": "Layout",
     "dependencies": [],
     "props": [

@@ -2,6 +2,7 @@
     "name": "alert",
     "label": "Alert",
     "description": "A contextual message box with six variants, built-in per-variant icons, title, and description.",
+    "example": "<x-alert variant=\"success\" title=\"Payment successful\" description=\"Your payment of .99 has been processed.\" />",
     "category": "Feedback",
     "dependencies": [],
     "props": [

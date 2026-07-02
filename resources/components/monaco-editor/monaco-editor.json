@@ -2,6 +2,7 @@
     "name": "monaco-editor",
     "label": "Monaco Editor",
     "description": "The VS Code editor as a Blade component — syntax highlighting, themes, auto dark mode, and many languages. Lazy-loads its bundle on demand.",
+    "example": "<x-monaco-editor language=\"javascript\" :height=\"260\" :content=\"$code\" />",
     "category": "Editors",
     "dependencies": [],
     "assets": true,

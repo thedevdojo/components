@@ -2,6 +2,7 @@
     "name": "avatar",
     "label": "Avatar",
     "description": "A user avatar showing a photo, auto-generated initials from a name, or a fallback icon. Five sizes, square or circle, an optional status dot, and deterministic colors.",
+    "example": "<x-avatar name=\"Tony Lea\" circle />",
     "category": "Display",
     "dependencies": [],
     "props": [

@@ -2,6 +2,7 @@
     "name": "drawer",
     "label": "Drawer",
     "description": "A teleported slide-in panel from the left or right, with header, content and footer slots and optional parent scaling.",
+    "example": "<x-drawer position=\"right\">\n    <x-slot:trigger>\n        <x-button>Open drawer</x-button>\n    </x-slot:trigger>\n    <x-slot:header>Edit profile</x-slot:header>\n    <x-slot:content>\n        <x-input label=\"Name\" value=\"Tony Lea\" />\n    </x-slot:content>\n</x-drawer>",
     "category": "Overlays",
     "dependencies": ["button"],
     "props": [

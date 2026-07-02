@@ -2,6 +2,7 @@
     "name": "progress",
     "label": "Progress",
     "description": "A horizontal progress bar for showing completion. Set a value (0–100), or use the indeterminate state for unknown-duration work. Three thicknesses.",
+    "example": "<x-progress :value=\"60\" />",
     "category": "Feedback",
     "dependencies": [],
     "props": [

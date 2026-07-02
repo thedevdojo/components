@@ -2,6 +2,7 @@
     "name": "button",
     "label": "Button",
     "description": "A versatile button with multiple variants, sizes, link support, and built-in Livewire loading states.",
+    "example": "<x-button>Submit</x-button>",
     "category": "Forms",
     "dependencies": [],
     "props": [

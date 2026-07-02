@@ -2,6 +2,7 @@
     "name": "textarea",
     "label": "Textarea",
     "description": "A multi-line text field with an optional label and automatic validation errors. Matches the input component's styling. Works with wire:model.",
+    "example": "<x-textarea label=\"Message\" placeholder=\"Write your message…\" />",
     "category": "Forms",
     "dependencies": ["label"],
     "props": [

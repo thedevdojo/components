@@ -2,6 +2,7 @@
     "name": "select",
     "label": "Select",
     "description": "A styled native select with an optional label, placeholder and automatic validation errors. Pass <option> elements as the content. Works with wire:model.",
+    "example": "<x-select label=\"Country\" placeholder=\"Choose a country\">\n    <option>United States</option>\n    <option>United Kingdom</option>\n    <option>Australia</option>\n</x-select>",
     "category": "Forms",
     "dependencies": ["label"],
     "props": [

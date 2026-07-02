@@ -2,6 +2,7 @@
     "name": "pagination",
     "label": "Pagination",
     "description": "Page navigation with previous/next controls and a windowed list of page numbers (with ellipses). Feed it the current and total pages from your paginator.",
+    "example": "<x-pagination :current-page=\"4\" :total-pages=\"10\" />",
     "category": "Navigation",
     "dependencies": [],
     "props": [

@@ -2,6 +2,7 @@
     "name": "separator",
     "label": "Separator",
     "description": "A thin divider for separating content. Horizontal by default, vertical on demand, or with a centered label.",
+    "example": "<x-separator label=\"OR\" />",
     "category": "Layout",
     "dependencies": [],
     "props": [

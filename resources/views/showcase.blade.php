@@ -18,7 +18,50 @@
         })();
     </script>
 
+    {{-- Clipboard helper. navigator.clipboard only exists in secure contexts
+         (HTTPS / localhost), so it's undefined over plain HTTP like *.test.
+         Fall back to a temporary textarea + execCommand so copy still works. --}}
+    <script>
+        window.ddCopy = async function (text) {
+            try {
+                if (navigator.clipboard && window.isSecureContext) {
+                    await navigator.clipboard.writeText(text);
+                    return true;
+                }
+            } catch (e) { /* fall through to the legacy path */ }
+
+            try {
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                textarea.setAttribute('readonly', '');
+                textarea.style.position = 'fixed';
+                textarea.style.top = '-9999px';
+                document.body.appendChild(textarea);
+                textarea.select();
+                const ok = document.execCommand('copy');
+                document.body.removeChild(textarea);
+                return ok;
+            } catch (e) {
+                return false;
+            }
+        };
+    </script>
+
     @vite(['resources/css/app.css'])
+
+    {{-- Syntax-highlight palette for the per-component code snippets (GitHub-ish,
+         tuned for both themes). Kept here so it never ships in the publishable
+         theme — the snippets only exist in this local showcase. --}}
+    <style>
+        .dd-syntax .tok-tag { color: #8250df; }
+        .dd-syntax .tok-attr { color: #0550ae; }
+        .dd-syntax .tok-str { color: #0a7c42; }
+        .dd-syntax .tok-punct { color: #6e7781; }
+        .dark .dd-syntax .tok-tag { color: #d2a8ff; }
+        .dark .dd-syntax .tok-attr { color: #79c0ff; }
+        .dark .dd-syntax .tok-str { color: #7ee787; }
+        .dark .dd-syntax .tok-punct { color: #8b949e; }
+    </style>
 
     @if (class_exists(\Livewire\Livewire::class))
         {{-- Livewire ships Alpine (with the focus & collapse plugins) and powers
@@ -113,25 +156,32 @@
         </aside>
 
         {{-- ===================== MAIN CONTENT ===================== --}}
-        <main class="min-w-0 flex-1 py-10 lg:py-14">
+        <main class="min-w-0 flex-1 py-10">
 
             {{-- Intro --}}
             <div class="border-b border-foreground/10 pb-10">
-                <span class="inline-flex items-center gap-1.5 rounded-full border border-foreground/10 bg-secondary px-3 py-1 text-xs font-medium text-foreground/70">
-                    <span class="h-1.5 w-1.5 rounded-full bg-green-500"></span>
-                    {{ count($categories->flatten(1)) }} components ready to add
-                </span>
-                <h1 class="mt-5 max-w-2xl text-balance text-3xl font-semibold tracking-tight sm:text-4xl">
-                    Blade components you'll actually want to ship.
+                <h1 class="text-3xl font-semibold tracking-tight sm:text-4xl">
+                    Laravel Blade Components
                 </h1>
                 <p class="mt-3 max-w-xl text-balance text-base text-foreground/60">
                     Browse the collection below, then add the ones you need straight into your app.
                     They become <span class="font-medium text-foreground">your</span> code — edit freely.
                 </p>
 
-                <div class="mt-6 inline-flex items-center gap-2 rounded-medium border border-foreground/10 bg-card px-4 py-2.5 font-mono text-sm shadow-xs">
-                    <span class="text-foreground/40 select-none">$</span>
-                    <span class="text-foreground/90">php artisan components:add</span>
+                <div class="mt-6" x-data="{ copied: false }">
+                    <div class="inline-flex items-center gap-3 rounded-medium border border-foreground/10 bg-card py-2 pl-5 pr-2 font-mono text-sm shadow-xs">
+                        <span class="text-foreground/40 select-none">$</span>
+                        <span class="text-foreground/90">php artisan components:add --all</span>
+                        <button type="button" aria-label="Copy command"
+                            @click="ddCopy('php artisan components:add --all'); copied = true; setTimeout(() => copied = false, 1500)"
+                            class="ml-1 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-small border border-foreground/10 bg-background text-foreground/55 transition hover:bg-secondary hover:text-foreground">
+                            <svg x-show="!copied" class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" /><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" /></svg>
+                            <svg x-show="copied" x-cloak class="h-3.5 w-3.5 text-green-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg>
+                        </button>
+                    </div>
+                    <p class="mt-2 text-sm text-foreground/50">
+                        Publishes every component into <code class="rounded-small bg-secondary px-1.5 py-0.5 font-mono text-xs text-foreground/70">resources/views/components</code>.
+                    </p>
                 </div>
             </div>
 
