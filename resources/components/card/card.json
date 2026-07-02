@@ -14,5 +14,9 @@
     ],
     "studio": {
         "container": "<div class=\"w-full max-w-lg mx-auto\">{{component}}</div>"
-    }
+    },
+    "examples": [
+        { "title": "Header & footer slots", "description": "Compose a heading and actions around the main content.", "file": "header-footer.blade.php" },
+        { "title": "Sizes", "description": "Small and large padding presets.", "file": "sizes.blade.php" }
+    ]
 }

@@ -10,5 +10,8 @@
         { "name": "wireTarget", "type": "text", "default": null, "description": "Livewire property to set with the cropped base64 PNG after applying." },
         { "name": "placeholder", "type": "text", "default": null, "description": "Fallback image URL shown when src is empty." }
     ],
-    "usage": "Loads Croppie + Exif-JS from a CDN automatically. Use inside a Livewire component for wireTarget to work, then base64_decode() the value to store it."
+    "usage": "Loads Croppie + Exif-JS from a CDN automatically. Use inside a Livewire component for wireTarget to work, then base64_decode() the value to store it.",
+    "examples": [
+        { "title": "Basic", "description": "Click the circle to choose a JPG or PNG; crop and resize before it's applied.", "file": "basic.blade.php" }
+    ]
 }

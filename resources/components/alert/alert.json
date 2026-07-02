@@ -16,5 +16,9 @@
     "studio": {
         "container": "<div class=\"w-full max-w-lg mx-auto\">{{component}}</div>",
         "defaults": { "title": "Heads up", "description": "This alert calls out something the user should notice." }
-    }
+    },
+    "examples": [
+        { "title": "Variants", "description": "Six contextual variants with built-in icons.", "file": "variants.blade.php" },
+        { "title": "With extra content", "description": "Add a link or button in the default slot below the description.", "file": "with-content.blade.php" }
+    ]
 }

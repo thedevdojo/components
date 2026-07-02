@@ -10,5 +10,9 @@
         { "name": "format", "type": "select", "default": "M d, Y", "options": ["M d, Y", "MM-DD-YYYY", "DD-MM-YYYY", "YYYY-MM-DD", "D d M, Y"], "description": "How the selected date is formatted." },
         { "name": "value", "type": "text", "default": null, "description": "Initial date value (parseable date string)." },
         { "name": "name", "type": "text", "default": null, "description": "Name for a hidden input, for plain form submission." }
+    ],
+    "examples": [
+        { "title": "Basic", "description": "A labeled field that opens a teleported calendar.", "file": "basic.blade.php" },
+        { "title": "Custom format", "description": "Pre-fill a value and control how it displays.", "file": "custom-format.blade.php" }
     ]
 }

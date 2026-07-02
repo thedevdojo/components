@@ -13,5 +13,9 @@
     ],
     "slots": [
         { "name": "slot", "description": "The main content for the badge.", "default": "Badge" }
+    ],
+    "examples": [
+        { "title": "Variants", "description": "Solid, soft status and outline treatments.", "file": "variants.blade.php" },
+        { "title": "Sizes & pill", "description": "Three sizes, plus a pill shape with a leading icon.", "file": "sizes.blade.php" }
     ]
 }

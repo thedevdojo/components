@@ -15,5 +15,9 @@
     ],
     "slots": [
         { "name": "slot", "description": "Custom fallback content, shown when there's no src, initials or name." }
+    ],
+    "examples": [
+        { "title": "Sizes, photos & status", "description": "Photo, initials, or icon fallback — five sizes, circle or square, with an optional status dot.", "file": "sizes.blade.php" },
+        { "title": "Colors", "description": "Deterministic soft colors, or auto to derive one from the name.", "file": "colors.blade.php" }
     ]
 }

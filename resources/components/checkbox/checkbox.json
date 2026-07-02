@@ -18,5 +18,9 @@
     ],
     "studio": {
         "defaults": { "label": "Accept terms and conditions" }
-    }
+    },
+    "examples": [
+        { "title": "Basic, checked & disabled", "description": "Label, description and disabled states.", "file": "basic.blade.php" },
+        { "title": "Clickable row", "description": "Make the whole row a single click target.", "file": "clickable-row.blade.php" }
+    ]
 }
