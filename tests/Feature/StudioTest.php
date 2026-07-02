@@ -116,6 +116,13 @@ it('neutralizes Blade echo and directive syntax in attribute values', function (
 
     // example[] as an array must not 500.
     $this->get('/components/button/preview?example[]=x')->assertOk();
+
+    // JSON unicode-escaped braces ({}) — json_decode reintroduces
+    // real braces, but they land in a bound :attr PHP string literal that
+    // Blade's compileEchos never compiles. Must stay inert.
+    $this->get('/components/button/preview?'.http_build_query([
+        'attrs' => ['variant' => '["{{ system(chr(105).chr(100)) }}"]'],
+    ]))->assertOk()->assertDontSee('uid=', false);
 });
 
 it('lists every component on the index with links to their pages', function () {
