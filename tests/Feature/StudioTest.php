@@ -120,3 +120,27 @@ it('does not leak the preview namespace into displayed code', function () {
         ->assertOk()
         ->assertDontSee('x-components.button', false);
 });
+
+it('renders playground knobs for every declared button prop and slot', function () {
+    $this->get('/components/button')
+        ->assertOk()
+        ->assertSee('studioPlayground(', false)
+        ->assertSee("x-model=\"attrs['variant']\"", false)
+        ->assertSee('data-knob="loader"', false)
+        ->assertSee("x-model=\"slots['slot']\"", false)
+        ->assertSee('option value="ghost"', false);
+});
+
+it('seeds the playground with published-syntax code', function () {
+    $this->get('/components/button')
+        ->assertOk()
+        ->assertSee('&lt;x-button', false);
+});
+
+it('seeds playground state from the query string', function () {
+    // href is a text prop; its query value must round-trip into the
+    // server-rendered playground config for Alpine to pick up.
+    $this->get('/components/button?attrs[href]=/custom-path&tab=playground')
+        ->assertOk()
+        ->assertSee('custom-path', false);
+});
