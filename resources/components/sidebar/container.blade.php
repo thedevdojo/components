@@ -50,7 +50,7 @@
         }">
         <main @class([
             'w-full h-full bg-white flex flex-col justify-stretch',
-            'shadow rounded-xl' => $variant == 'inset',
+            'shadow rounded-large' => $variant == 'inset',
         ])>
             @if($contentHeader)
                 <header @class([

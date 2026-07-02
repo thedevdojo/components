@@ -94,7 +94,7 @@
     >
         <div @class([
             'bg-sidebar-background text-sidebar-foreground flex flex-col h-full',
-            'rounded-lg shadow-md border border-sidebar-border' => $variant === 'floating',
+            'rounded-large shadow-md border border-sidebar-border' => $variant === 'floating',
         ])>
             {{ $slot }}
         </div>

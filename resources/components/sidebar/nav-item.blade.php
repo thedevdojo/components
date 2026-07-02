@@ -25,7 +25,7 @@
 <a 
     href="{{ $href }}"
     {{ $attributes->merge([
-        'class' => 'group flex items-center rounded-md ' . $padding . ' text-sm font-normal hover:bg-sidebar-accent hover:text-sidebar-accent-foreground' . 
+        'class' => 'group flex items-center rounded-medium ' . $padding . ' text-sm font-normal hover:bg-sidebar-accent hover:text-sidebar-accent-foreground' .
         ($active ? 'bg-sidebar-accent text-sidebar-accent-foreground' : 'transparent') . ' ' . 
         $class
     ]) }}

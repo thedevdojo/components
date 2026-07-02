@@ -17,11 +17,11 @@
 @endphp
 
 <div x-data="{ {{ $id }}: {{ $open ? 'true' : 'false' }} }"
-    :class="{ 'rounded-lg ease-out duration-300' : {{ $id }} == true }"
+    :class="{ 'rounded-medium ease-out duration-300' : {{ $id }} == true }"
     class="relative w-full select-none">
     <div
         @click="{{ $id }}=!{{ $id }};"
-        class="@if($active){{ 'text-sidebar-accent-foreground bg-sidebar-accent' }}@endif ease-linear hover:bg-sidebar-accent hover:text-sidebar-accent-foreground duration-50 transition-colors flex rounded-lg w-full h-auto {{ $padding }} cursor-pointer text-sm font-normal justify-start items-center overflow-hidden group-hover:autoflow-auto items"
+        class="@if($active){{ 'text-sidebar-accent-foreground bg-sidebar-accent' }}@endif ease-linear hover:bg-sidebar-accent hover:text-sidebar-accent-foreground duration-50 transition-colors flex rounded-medium w-full h-auto {{ $padding }} cursor-pointer text-sm font-normal justify-start items-center overflow-hidden group-hover:autoflow-auto items"
         
     >
         <div class="flex relative items-center w-full h-auto">
