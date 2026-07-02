@@ -154,10 +154,19 @@ class StudioController
 
         return array_filter(
             $attrs,
-            fn ($value, $key) => (string) $value !== (string) ($defaults[$key] ?? '')
+            fn ($value, $key) => $this->stringify($value) !== $this->stringify($defaults[$key] ?? '')
                 && ! ($value === false && ($defaults[$key] ?? false) === false),
             ARRAY_FILTER_USE_BOTH
         );
+    }
+
+    /**
+     * Cast an attr/default value for comparison — array-type props (e.g. the
+     * command palette's "items") can't be cast to string directly.
+     */
+    protected function stringify(mixed $value): string
+    {
+        return is_array($value) ? json_encode($value) : (string) $value;
     }
 
     /**

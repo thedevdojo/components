@@ -93,3 +93,30 @@ it('lists every component on the index with links to their pages', function () {
 it('renders the command palette items on the index', function () {
     $this->get('/components')->assertOk()->assertSee('command-select', false);
 });
+
+it('renders every component detail page', function (string $name) {
+    $this->get('/components/'.$name)->assertOk();
+})->with(fn () => array_map(fn ($n) => [$n], Components::names()));
+
+it('shows install command, docs examples and reference tables for button', function () {
+    $this->get('/components/button')
+        ->assertOk()
+        ->assertSee('php artisan components:add button')
+        ->assertSee('Variants')
+        ->assertSee('Sizes')
+        ->assertSee('&lt;x-button', false) // displayed code is published syntax, escaped in the <pre>
+        ->assertSee('variant')
+        ->assertSee('destructive');
+});
+
+it('renders a declared example through the preview endpoint', function () {
+    $this->get('/components/button/preview?example=variants')
+        ->assertOk()
+        ->assertSee('Secondary');
+});
+
+it('does not leak the preview namespace into displayed code', function () {
+    $this->get('/components/button')
+        ->assertOk()
+        ->assertDontSee('x-components.button', false);
+});

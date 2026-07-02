@@ -74,7 +74,10 @@ it('re-adds (overwrites) a component via the livewire card', function () {
 it('does not publish example files into the host application', function () {
     $sourceExamples = Components::sourcePath('button/examples');
     File::ensureDirectoryExists($sourceExamples);
-    File::put($sourceExamples.'/smoke.blade.php', '<x-components.button>Example</x-components.button>');
+    // Button already ships real examples (variants/sizes/loading); only remove
+    // the fixture file this test adds, never the whole directory.
+    $smokeFile = $sourceExamples.'/smoke.blade.php';
+    File::put($smokeFile, '<x-components.button>Example</x-components.button>');
 
     try {
         $publisher = app(Publisher::class);
@@ -83,6 +86,6 @@ it('does not publish example files into the host application', function () {
         expect(is_file($publisher->destinationDir('button').'/index.blade.php'))->toBeTrue()
             ->and(is_dir($publisher->destinationDir('button').'/examples'))->toBeFalse();
     } finally {
-        File::deleteDirectory($sourceExamples);
+        File::delete($smokeFile);
     }
 });
