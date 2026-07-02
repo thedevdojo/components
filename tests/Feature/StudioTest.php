@@ -60,6 +60,15 @@ it('wraps overlay components in their studio container', function () {
         ->assertSee('min-h-96', false);
 });
 
+it('renders trusted default-slot component markup instead of raw tags', function () {
+    // No slots[] query param → default slot is the trusted metadata default.
+    foreach (['tabs', 'breadcrumbs', 'accordion'] as $name) {
+        $this->get("/components/{$name}/preview")
+            ->assertOk()
+            ->assertDontSee('<x-components.', false); // must be compiled, not literal
+    }
+});
+
 it('returns 404 for unknown components', function () {
     $this->get('/components/nope/preview')->assertNotFound();
     $this->get('/components/nope')->assertNotFound();

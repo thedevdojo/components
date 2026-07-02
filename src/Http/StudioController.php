@@ -68,7 +68,19 @@ class StudioController
         } else {
             [$attrs, $slotValues] = $this->playgroundState($component, $request);
 
-            $code = CodeGenerator::generate($name, $attrs, $this->verbatimSlots($slotValues));
+            // Only user-supplied slot values (present in the query string) are
+            // untrusted and must be neutralized against Blade/PHP injection.
+            // Package-authored defaults are trusted and render raw, so their
+            // <x-components.*> markup compiles like an example file does.
+            $userSlotKeys = array_keys((array) $request->query('slots', []));
+            $renderSlots = [];
+            foreach ($slotValues as $key => $value) {
+                $renderSlots[$key] = in_array($key, $userSlotKeys, true)
+                    ? $this->neutralizeSlot((string) $value)
+                    : $value;
+            }
+
+            $code = CodeGenerator::generate($name, $attrs, $renderSlots);
 
             if ($container = $component['studio']['container'] ?? null) {
                 $code = str_replace('{{component}}', $code, $container);
@@ -170,24 +182,20 @@ class StudioController
     }
 
     /**
-     * Neutralize Blade in user-supplied slot content for the server-render
-     * path: markup passes through, but directives, echoes and PHP blocks
-     * render as literal text. Never applied to displayed code.
-     *
-     * @param  array<string, string>  $slots
-     * @return array<string, string>
+     * Neutralize Blade in a single user-supplied slot value for the
+     * server-render path: markup passes through, but directives, echoes and PHP
+     * blocks render as literal text. Applied ONLY to untrusted query-string
+     * slot values — never to package-authored defaults or displayed code.
      */
-    protected function verbatimSlots(array $slots): array
+    protected function neutralizeSlot(string $content): string
     {
-        return array_map(function (string $content): string {
-            if (trim($content) === '') {
-                return $content;
-            }
+        if (trim($content) === '') {
+            return $content;
+        }
 
-            $content = str_ireplace(['@verbatim', '@endverbatim'], '', $content);
+        $content = str_ireplace(['@verbatim', '@endverbatim'], '', $content);
 
-            return '@verbatim'.$content.'@endverbatim';
-        }, $slots);
+        return '@verbatim'.$content.'@endverbatim';
     }
 
     /**
