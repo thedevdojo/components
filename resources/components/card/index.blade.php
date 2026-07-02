@@ -1,5 +1,6 @@
 @props([
     'size' => 'md',
+    'href' => null,
 ])
 
 @php
@@ -17,9 +18,12 @@
             $sizeClasses = 'rounded-medium p-5 text-sm';
             break;
     }
+
+    $tag = $href ? 'a' : 'div';
+    $hrefAttr = $href ? 'href="' . e($href) . '"' : '';
 @endphp
 
-<div {{ $attributes->twMerge($sizeClasses . ' bg-card text-card-foreground border border-foreground/10 dark:border-foreground/12 shadow-xs w-full') }}>
+<{!! $tag !!} {!! $hrefAttr !!} {{ $attributes->twMerge($sizeClasses . ' bg-card text-card-foreground border border-border shadow-xs w-full') }}>
     @isset($header)
         <div {{ $attributes->twMergeFor('header', 'mb-3 flex flex-col gap-1') }}>
             {{ $header }}
@@ -33,4 +37,4 @@
             {{ $footer }}
         </div>
     @endisset
-</div>
+</{!! $tag !!}>

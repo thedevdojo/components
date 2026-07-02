@@ -8,7 +8,8 @@
     "props": [
         { "name": "position", "type": "select", "default": "bottom", "options": ["bottom", "top", "left", "right"], "description": "Which side of the trigger the popover opens on." },
         { "name": "align", "type": "select", "default": "left", "options": ["left", "center", "right", "bottom"], "description": "Alignment of the popover relative to the trigger." },
-        { "name": "gap", "type": "text", "default": "2", "description": "Spacing between trigger and popover (Tailwind spacing units)." }
+        { "name": "gap", "type": "text", "default": "2", "description": "Spacing between trigger and popover (Tailwind spacing units)." },
+        { "name": "animate", "type": "boolean", "default": true, "description": "Scale + fade the panel open from the corner nearest the trigger. Set false for a plain fade." }
     ],
     "slots": [
         { "name": "trigger", "description": "The clickable element that opens the popover." },

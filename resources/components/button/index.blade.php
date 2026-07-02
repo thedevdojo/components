@@ -5,24 +5,25 @@
     'href' => null,
     'loader' => false,
     'loading' => false,
+    'topHighlight' => true,
 ])
 
 @php
     switch ($size ?? 'md') {
         case 'xs':
-            $sizeClasses = 'px-2.5 py-1 leading-4 text-[11px] rounded-medium';
+            $sizeClasses = 'h-7 px-2.5 text-[11px] rounded-small gap-1';
             $loaderClasses = 'size-3';
             break;
         case 'sm':
-            $sizeClasses = 'px-3 py-[5px] leading-4 text-xs rounded-medium';
+            $sizeClasses = 'h-[30px] px-2.5 text-[13px] rounded-small gap-1.5';
             $loaderClasses = 'size-3';
             break;
         case 'md':
-            $sizeClasses = 'px-3.5 py-2 leading-4 text-xs rounded-medium';
+            $sizeClasses = 'h-9 px-3.5 text-sm rounded-medium gap-2';
             $loaderClasses = 'size-3.5';
             break;
         case 'lg':
-            $sizeClasses = 'px-4 py-2 leading-5 text-sm rounded-medium';
+            $sizeClasses = 'h-11 px-5 text-[15px] rounded-large gap-2';
             $loaderClasses = 'size-4';
             break;
         case 'xl':
@@ -38,37 +39,38 @@
             $loaderClasses = 'size-5';
             break;
         default:
-            $sizeClasses = 'px-3.5 py-2 leading-4 text-xs rounded-medium';
+            $sizeClasses = 'h-9 px-3.5 text-sm rounded-medium gap-2';
             $loaderClasses = 'size-3.5';
             break;
     }
 @endphp
 
 @php
-    $topHighlight = ' shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.3),inset_0_-1px_1px_0_rgba(0,0,0,0.3)] dark:shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.3),inset_0_-1px_1px_0_rgba(255,255,255,0.15)]';
+    $topHighlightClasses = $topHighlight ? ' shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.3),inset_0_-1px_1px_0_rgba(0,0,0,0.3)] dark:shadow-[inset_0_1px_1px_0_rgba(255,255,255,0.3),inset_0_-1px_1px_0_rgba(255,255,255,0.15)]' : '';
 
-    $defaultClasses = 'border-transparent no-underline bg-linear-to-b from-primary/90 via-primary/90 to-primary text-primary-foreground select-none focus-visible:ring-2 focus-visible:ring-primary/10 dark:focus-visible:ring-primary/20 focus-visible:ring-offset-2 focus-visible:ring-offset-background hover:opacity-95';
+    $primaryClasses = 'border-transparent no-underline bg-primary text-primary-foreground shadow-[0_1px_2px_hsl(var(--shadow-color)/0.25),inset_0_1px_0_rgba(255,255,255,0.12)] hover:bg-accent-hover hover:-translate-y-px hover:shadow-[0_4px_14px_color-mix(in_oklab,var(--accent)_40%,transparent)] focus-visible:ring-2 focus-visible:ring-primary/10 dark:focus-visible:ring-primary/20 focus-visible:ring-offset-2 focus-visible:ring-offset-background';
+
     switch ($variant ?? 'primary') {
         case 'primary':
-            $typeClasses = $defaultClasses . $topHighlight;
+            $typeClasses = $primaryClasses;
             break;
         case 'secondary':
-            $typeClasses = 'border-transparent no-underline text-secondary-foreground bg-secondary hover:bg-secondary/80 focus-visible:ring-2 focus-visible:ring-secondary/90 focus-visible:ring-offset-2 focus-visible:ring-offset-background';
+            $typeClasses = 'no-underline text-secondary-foreground bg-secondary border-line-strong hover:bg-elevated hover:border-[color-mix(in_oklab,var(--fg)_22%,transparent)] focus-visible:ring-2 focus-visible:ring-secondary/90 focus-visible:ring-offset-2 focus-visible:ring-offset-background';
             break;
         case 'destructive':
-            $typeClasses = 'border-transparent no-underline bg-destructive focus-visible:ring-2 focus-visible:ring-destructive/30 focus-visible:ring-offset-2 focus-visible:ring-offset-background text-white hover:opacity-95' . $topHighlight;
+            $typeClasses = 'border-transparent no-underline bg-destructive focus-visible:ring-2 focus-visible:ring-destructive/30 focus-visible:ring-offset-2 focus-visible:ring-offset-background text-white hover:opacity-95' . $topHighlightClasses;
             break;
         case 'outline':
             $typeClasses = 'no-underline text-foreground bg-background hover:bg-secondary border-foreground/10 dark:border-foreground/15 focus-visible:ring-2 focus-visible:ring-secondary/90 focus-visible:ring-offset-2 focus-visible:ring-offset-background';
             break;
         case 'ghost':
-            $typeClasses = 'border-transparent no-underline text-foreground hover:bg-secondary focus-visible:ring-2 focus-visible:ring-secondary/90 focus-visible:ring-offset-2 focus-visible:ring-offset-background';
+            $typeClasses = 'border-transparent no-underline text-muted hover:bg-elevated hover:text-foreground focus-visible:ring-2 focus-visible:ring-secondary/90 focus-visible:ring-offset-2 focus-visible:ring-offset-background';
             break;
         case 'link':
             $typeClasses = 'border-transparent no-underline text-foreground hover:underline';
             break;
         default:
-            $typeClasses = $defaultClasses;
+            $typeClasses = $primaryClasses;
             break;
     }
 @endphp
@@ -99,7 +101,7 @@
     $wireTarget = is_null($attributes->get('wire:target')) ? $attributes->get('wire:click') : $attributes->get('wire:target');
 @endphp
 
-<{!! $typeAttr !!} {{ $attributes->twMerge($sizeClasses . ' ' . $typeClasses . ' relative cursor-pointer border inline-flex items-center justify-center font-medium transition focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-60') }}>
+<{!! $typeAttr !!} {{ $attributes->twMerge($sizeClasses . ' ' . $typeClasses . ' relative cursor-pointer border inline-flex items-center justify-center font-medium whitespace-nowrap select-none transition-all duration-150 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-60') }}>
     @if ($loading ?? false)
         <span class="absolute flex h-full w-full items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" class="{{ $loaderClasses }} animate-spin" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
