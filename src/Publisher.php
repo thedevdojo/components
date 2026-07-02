@@ -60,6 +60,11 @@ class Publisher
                 continue;
             }
 
+            // Studio examples document the component; they are not part of it.
+            if (str_starts_with($file->getRelativePathname(), 'examples/')) {
+                continue;
+            }
+
             $target = $destinationDir.'/'.$file->getRelativePathname();
             $this->files->ensureDirectoryExists(dirname($target));
 

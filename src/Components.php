@@ -64,6 +64,9 @@ class Components
                 'category' => 'Components',
                 'dependencies' => [],
                 'props' => [],
+                'slots' => [],
+                'examples' => [],
+                'studio' => [],
             ], $meta);
         }
 

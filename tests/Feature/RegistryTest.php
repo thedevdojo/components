@@ -34,3 +34,11 @@ it('groups components by category in display order', function () {
     expect(Components::byCategory()->keys()->all())
         ->toBe(['Forms', 'Layout', 'Navigation', 'Display', 'Overlays', 'Feedback', 'Editors']);
 });
+
+it('defaults slots, examples and studio keys on every manifest entry', function () {
+    foreach (Components::all() as $component) {
+        expect($component['slots'])->toBeArray()
+            ->and($component['examples'])->toBeArray()
+            ->and($component['studio'])->toBeArray();
+    }
+});
