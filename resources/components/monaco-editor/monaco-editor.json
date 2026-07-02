@@ -18,5 +18,8 @@
     "studio": {
         "card": "<div class=\"text-sm text-foreground/60\">Loads the Monaco bundle — open the docs to preview.</div>"
     },
-    "usage": "Requires the JS bundle: php artisan vendor:publish --tag=devdojo-assets"
+    "usage": "Requires the JS bundle: php artisan vendor:publish --tag=devdojo-assets",
+    "examples": [
+        { "title": "Basic", "description": "Syntax highlighting for JavaScript, with auto dark mode.", "file": "basic.blade.php", "height": "18rem" }
+    ]
 }

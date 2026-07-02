@@ -15,5 +15,8 @@
     "studio": {
         "defaults": { "title": "No results found", "description": "Try adjusting your filters or search terms." }
     },
-    "usage": "Put call-to-action buttons in the default slot; override the icon with <x-slot:icon>…</x-slot:icon>."
+    "usage": "Put call-to-action buttons in the default slot; override the icon with <x-slot:icon>…</x-slot:icon>.",
+    "examples": [
+        { "title": "Basic", "description": "An icon, title, description and a call-to-action button.", "file": "basic.blade.php" }
+    ]
 }

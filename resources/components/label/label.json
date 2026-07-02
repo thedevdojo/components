@@ -9,5 +9,8 @@
     ],
     "slots": [
         { "name": "slot", "description": "The label text.", "default": "Email address" }
+    ],
+    "examples": [
+        { "title": "Basic", "description": "A label bound to a field's id.", "file": "basic.blade.php" }
     ]
 }

@@ -19,5 +19,8 @@
         "container": "<div class=\"flex min-h-96 w-full items-center justify-center\">{{component}}</div>",
         "defaults": { "open": true },
         "height": "28rem"
-    }
+    },
+    "examples": [
+        { "title": "Confirmation dialog", "description": "A focus-trapped dialog with header, content and footer slots.", "file": "confirmation.blade.php", "height": "24rem" }
+    ]
 }

@@ -18,5 +18,8 @@
     ],
     "studio": {
         "container": "<div class=\"flex min-h-96 w-full items-center justify-center\">{{component}}</div>"
-    }
+    },
+    "examples": [
+        { "title": "Basic menu", "description": "A click-to-open menu anchored to its trigger.", "file": "basic.blade.php", "height": "18rem" }
+    ]
 }

@@ -23,5 +23,8 @@
     "studio": {
         "container": "<div class=\"flex min-h-96 w-full items-center justify-center\">{{component}}</div>",
         "defaults": { "open": true, "header": "Drawer Title", "content": "The main content for your drawer goes here." }
-    }
+    },
+    "examples": [
+        { "title": "Left & right", "description": "Slide in from either side, with header, content and footer slots.", "file": "positions.blade.php", "height": "24rem" }
+    ]
 }
