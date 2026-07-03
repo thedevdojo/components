@@ -37,6 +37,8 @@
             if (panes.length < 2) return;
 
             const sizes = panes.map(p => parseFloat(p.dataset.size) || (100 / panes.length));
+            // Per-pane minimums via data-min-size (px); fall back to the shared prop.
+            const minSizes = panes.map(p => p.dataset.minSize !== undefined ? parseInt(p.dataset.minSize) : {{ (int) $minSize }});
 
             // Tear down any prior instance so re-init swaps orientations cleanly.
             if (this.splitInstance) {
@@ -51,7 +53,7 @@
                 direction: this.direction,
                 sizes: sizes,
                 gutterSize: {{ (int) $gutterSize }},
-                minSize: {{ (int) $minSize }},
+                minSize: minSizes,
                 gutter: (index, gutterDirection) => {
                     const gutter = document.createElement('div');
                     gutter.setAttribute('wire:ignore', '');
@@ -68,12 +70,22 @@
                 onDragEnd: (sizes, gutter) => {
                     if (gutter && gutter.classList) gutter.classList.remove('gutter-dragging');
                     document.body.classList.remove('gutter-dragging-body', 'gutter-dragging-vertical');
+                    // Let the host app react (persist sizes, refresh embedded editors, …).
+                    this.$el.dispatchEvent(new CustomEvent('splitter-resized', { detail: { sizes }, bubbles: true }));
                 },
             });
+        },
+
+        setSizes(sizes) {
+            if (this.splitInstance && Array.isArray(sizes)) {
+                this.splitInstance.setSizes(sizes);
+                this.$el.dispatchEvent(new CustomEvent('splitter-resized', { detail: { sizes }, bubbles: true }));
+            }
         },
     }"
     x-init="initializeSplitter()"
     @splitter-init.window="initializeSplitter()"
+    @splitter-set-sizes.window="setSizes($event.detail?.sizes)"
     @splitter-set-direction.window="
         const d = $event.detail?.direction;
         if ((d === 'horizontal' || d === 'vertical') && d !== direction) {
