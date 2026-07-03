@@ -18,6 +18,8 @@
         splitInstance: null,
         direction: '{{ $direction }}',
         _splitRetries: 0,
+        _lastSizes: null,
+        _reinitQueued: false,
 
         initializeSplitter() {
             // Split.js loads async from the CDN above, while Alpine fires
@@ -36,7 +38,9 @@
             const panes = [...this.$el.querySelectorAll(':scope > .dd-split-pane')];
             if (panes.length < 2) return;
 
-            const sizes = panes.map(p => parseFloat(p.dataset.size) || (100 / panes.length));
+            const sizes = (this._lastSizes && this._lastSizes.length === panes.length)
+                ? this._lastSizes
+                : panes.map(p => parseFloat(p.dataset.size) || (100 / panes.length));
             // Per-pane minimums via data-min-size (px); fall back to the shared prop.
             const minSizes = panes.map(p => p.dataset.minSize !== undefined ? parseInt(p.dataset.minSize) : {{ (int) $minSize }});
 
@@ -68,16 +72,35 @@
                     }
                 },
                 onDragEnd: (sizes, gutter) => {
+                    this._lastSizes = sizes;
                     if (gutter && gutter.classList) gutter.classList.remove('gutter-dragging');
                     document.body.classList.remove('gutter-dragging-body', 'gutter-dragging-vertical');
                     // Let the host app react (persist sizes, refresh embedded editors, …).
                     this.$el.dispatchEvent(new CustomEvent('splitter-resized', { detail: { sizes }, bubbles: true }));
                 },
             });
+            this._lastSizes = sizes;
+
+            if (!this._morphGuard) {
+                // Livewire morphs remove the client-injected gutters (they are
+                // not in the server-rendered HTML). Detect that and rebuild —
+                // _lastSizes keeps the user's layout. Give panes wire:key when
+                // the splitter lives inside a morphing Livewire region.
+                this._morphGuard = new MutationObserver(() => {
+                    const paneCount = this.$el.querySelectorAll(':scope > .dd-split-pane').length;
+                    const gutterCount = this.$el.querySelectorAll(':scope > .gutter').length;
+                    if (paneCount >= 2 && gutterCount !== paneCount - 1 && !this._reinitQueued) {
+                        this._reinitQueued = true;
+                        setTimeout(() => { this._reinitQueued = false; this.initializeSplitter(); }, 60);
+                    }
+                });
+                this._morphGuard.observe(this.$el, { childList: true });
+            }
         },
 
         setSizes(sizes) {
             if (this.splitInstance && Array.isArray(sizes)) {
+                this._lastSizes = sizes;
                 this.splitInstance.setSizes(sizes);
                 this.$el.dispatchEvent(new CustomEvent('splitter-resized', { detail: { sizes }, bubbles: true }));
             }
