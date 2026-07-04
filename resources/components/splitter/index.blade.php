@@ -40,7 +40,11 @@
 
             const sizes = (this._lastSizes && this._lastSizes.length === panes.length)
                 ? this._lastSizes
-                : panes.map(p => parseFloat(p.dataset.size) || (100 / panes.length));
+                : panes.map(p => {
+                    // Not ||: a collapsed pane legitimately declares size 0.
+                    const declared = parseFloat(p.dataset.size);
+                    return Number.isFinite(declared) ? declared : (100 / panes.length);
+                });
             // Per-pane minimums via data-min-size (px); fall back to the shared prop.
             const minSizes = panes.map(p => p.dataset.minSize !== undefined ? parseInt(p.dataset.minSize) : {{ (int) $minSize }});
 
