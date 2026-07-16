@@ -26,12 +26,15 @@
         <a href="{{ $baseUrl }}/guide/{{ $guide['page'] }}"
             @if ($currentGuide === $guide['page']) aria-current="page" @endif
             @class([
-                'flex items-center gap-2 rounded-medium px-2 py-[5px] text-[13px] font-medium outline-none transition-colors duration-100 focus-visible:ring-2 focus-visible:ring-ring',
-                'bg-secondary text-foreground' => $currentGuide === $guide['page'],
+                'relative flex items-center gap-2 rounded-medium px-2 py-[5px] text-[13px] font-medium outline-none transition-colors duration-100 focus-visible:ring-2 focus-visible:ring-ring',
+                'text-foreground' => $currentGuide === $guide['page'],
                 'text-foreground/55 hover:bg-secondary/60 hover:text-foreground' => $currentGuide !== $guide['page'],
             ])>
-            <svg class="h-4 w-4 shrink-0 {{ $currentGuide === $guide['page'] ? 'text-foreground/80' : 'text-foreground/45' }}" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true">{!! $guide['icon'] !!}</svg>
-            {{ $guide['label'] }}
+            @if ($currentGuide === $guide['page'])
+                <span class="dd-nav-pill absolute inset-0 rounded-medium bg-secondary" aria-hidden="true"></span>
+            @endif
+            <svg class="relative h-4 w-4 shrink-0 {{ $currentGuide === $guide['page'] ? 'text-foreground/80' : 'text-foreground/45' }}" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true">{!! $guide['icon'] !!}</svg>
+            <span class="relative">{{ $guide['label'] }}</span>
         </a>
     @endforeach
 </nav>
@@ -52,10 +55,15 @@
                         x-show="matches(@js($component['label'].' '.$component['name'].' '.($component['description'] ?? '')))"
                         @if ($current === $component['name']) aria-current="page" @endif
                         @class([
-                            'flex items-center rounded-medium px-2 py-[5px] text-[13px] font-medium outline-none transition-colors duration-100 focus-visible:ring-2 focus-visible:ring-ring',
-                            'bg-secondary text-foreground' => $current === $component['name'],
+                            'relative flex items-center rounded-medium px-2 py-[5px] text-[13px] font-medium outline-none transition-colors duration-100 focus-visible:ring-2 focus-visible:ring-ring',
+                            'text-foreground' => $current === $component['name'],
                             'text-foreground/55 hover:bg-secondary/60 hover:text-foreground' => $current !== $component['name'],
-                        ])>{{ $component['label'] }}</a>
+                        ])>
+                        @if ($current === $component['name'])
+                            <span class="dd-nav-pill absolute inset-0 rounded-medium bg-secondary" aria-hidden="true"></span>
+                        @endif
+                        <span class="relative">{{ $component['label'] }}</span>
+                    </a>
                 @endforeach
             </div>
         </div>

@@ -2,6 +2,7 @@
     'direction' => 'horizontal',
     'gutterSize' => 8,
     'minSize' => 100,
+    'storageKey' => null,
 ])
 
 @php
@@ -17,9 +18,48 @@
     x-data="{
         splitInstance: null,
         direction: '{{ $direction }}',
+        storageKey: @js($storageKey),
         _splitRetries: 0,
         _lastSizes: null,
         _reinitQueued: false,
+
+        // Sizes persisted under storageKey (an array of pane percentages the
+        // host app saves from splitter-resized events), or null.
+        storedSizes(count) {
+            if (!this.storageKey) return null;
+            try {
+                const sizes = JSON.parse(localStorage.getItem(this.storageKey));
+                if (!Array.isArray(sizes) || sizes.length !== count) return null;
+                if (!sizes.every(s => Number.isFinite(s) && s >= 0)) return null;
+                const total = sizes.reduce((sum, s) => sum + s, 0);
+                return (total > 95 && total < 105) ? sizes : null;
+            } catch (e) { return null; }
+        },
+
+        initialSizes(panes) {
+            const remembered = (this._lastSizes && this._lastSizes.length === panes.length)
+                ? this._lastSizes
+                : this.storedSizes(panes.length);
+            return remembered || panes.map(p => {
+                // Not ||: a collapsed pane legitimately declares size 0.
+                const declared = parseFloat(p.dataset.size);
+                return Number.isFinite(declared) ? declared : (100 / panes.length);
+            });
+        },
+
+        // Paint the initial layout before Split.js (async, from a CDN) is up,
+        // using the same calc() Split.js will apply — otherwise the first
+        // frames render at flex defaults and snap once Split initializes.
+        applyStaticSizes() {
+            const panes = [...this.$el.querySelectorAll(':scope > .dd-split-pane')];
+            if (panes.length < 2) return;
+            const sizes = this.initialSizes(panes);
+            const property = this.direction === 'vertical' ? 'height' : 'width';
+            panes.forEach((p, i) => {
+                const gutterPx = (i === 0 || i === panes.length - 1) ? {{ (int) $gutterSize }} / 2 : {{ (int) $gutterSize }};
+                p.style[property] = 'calc(' + sizes[i] + '% - ' + gutterPx + 'px)';
+            });
+        },
 
         initializeSplitter() {
             // Split.js loads async from the CDN above, while Alpine fires
@@ -38,24 +78,25 @@
             const panes = [...this.$el.querySelectorAll(':scope > .dd-split-pane')];
             if (panes.length < 2) return;
 
-            const sizes = (this._lastSizes && this._lastSizes.length === panes.length)
-                ? this._lastSizes
-                : panes.map(p => {
-                    // Not ||: a collapsed pane legitimately declares size 0.
-                    const declared = parseFloat(p.dataset.size);
-                    return Number.isFinite(declared) ? declared : (100 / panes.length);
-                });
+            const sizes = this.initialSizes(panes);
             // Per-pane minimums via data-min-size (px); fall back to the shared prop.
             const minSizes = panes.map(p => p.dataset.minSize !== undefined ? parseInt(p.dataset.minSize) : {{ (int) $minSize }});
 
             // Tear down any prior instance so re-init swaps orientations cleanly.
+            // Gutter elements stay in the DOM — they're adopted again below.
             if (this.splitInstance) {
-                try { this.splitInstance.destroy(); } catch (e) {}
+                try { this.splitInstance.destroy(false, true); } catch (e) {}
                 this.splitInstance = null;
             }
-            // Strip inline sizes / stray gutters a previous instance left behind.
             panes.forEach(p => { p.style.removeProperty('width'); p.style.removeProperty('height'); });
-            this.$el.querySelectorAll(':scope > .gutter').forEach(g => g.remove());
+
+            // Adopt existing gutters — server-rendered x-splitter.gutter
+            // elements or survivors of a prior instance — so Livewire morphs
+            // see the same children the server rendered and never shuffle the
+            // panes (which would reload any iframe inside them). Extra ones
+            // (e.g. after a pane count change) are dropped.
+            const gutters = [...this.$el.querySelectorAll(':scope > .gutter')];
+            gutters.splice(panes.length - 1).forEach(g => g.remove());
 
             this.splitInstance = Split(panes, {
                 direction: this.direction,
@@ -63,7 +104,7 @@
                 gutterSize: {{ (int) $gutterSize }},
                 minSize: minSizes,
                 gutter: (index, gutterDirection) => {
-                    const gutter = document.createElement('div');
+                    const gutter = gutters[index - 1] || document.createElement('div');
                     gutter.setAttribute('wire:ignore', '');
                     gutter.className = `gutter gutter-${gutterDirection}`;
                     return gutter;
@@ -84,12 +125,13 @@
                 },
             });
             this._lastSizes = sizes;
+            this.$el.dispatchEvent(new CustomEvent('splitter-initialized', { detail: { sizes }, bubbles: true }));
 
             if (!this._morphGuard) {
-                // Livewire morphs remove the client-injected gutters (they are
-                // not in the server-rendered HTML). Detect that and rebuild —
-                // _lastSizes keeps the user's layout. Give panes wire:key when
-                // the splitter lives inside a morphing Livewire region.
+                // Safety net for splitters without server-rendered gutters: a
+                // Livewire morph removes client-injected ones. Detect that and
+                // rebuild — _lastSizes keeps the user's layout. Give panes
+                // wire:key when the splitter lives inside a morphing region.
                 this._morphGuard = new MutationObserver(() => {
                     const paneCount = this.$el.querySelectorAll(':scope > .dd-split-pane').length;
                     const gutterCount = this.$el.querySelectorAll(':scope > .gutter').length;
@@ -110,7 +152,7 @@
             }
         },
     }"
-    x-init="initializeSplitter()"
+    x-init="applyStaticSizes(); initializeSplitter()"
     @splitter-init.window="initializeSplitter()"
     @splitter-set-sizes.window="setSizes($event.detail?.sizes)"
     @splitter-set-direction.window="
@@ -142,6 +184,7 @@
         .gutter {
             position: relative;
             z-index: 5;
+            flex-shrink: 0;
             background: transparent;
         }
         .gutter::before,

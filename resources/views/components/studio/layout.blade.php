@@ -82,7 +82,11 @@
         /* Butter-smooth cross-page navigation (progressive enhancement —
            browsers without the View Transitions API just navigate normally).
            The sidebar and top bar keep their own snapshot so the frame feels
-           fixed, and the active nav pill slides to its new home. */
+           fixed. The active nav pill is NOT a view-transition layer on purpose:
+           named layers always paint above the sidebar snapshot, which would
+           drag the label along and cover other items mid-flight. Instead the
+           .dd-nav-pill background slides via the FLIP script below the aside,
+           so only the background moves and labels stay put. */
         @media (prefers-reduced-motion: no-preference) {
             @view-transition {
                 navigation: auto;
@@ -92,13 +96,6 @@
             }
             #dd-mobile-topbar {
                 view-transition-name: dd-topbar;
-            }
-            [aria-current="page"] {
-                view-transition-name: dd-nav-active;
-            }
-            ::view-transition-group(dd-nav-active) {
-                animation-duration: 250ms;
-                animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
             }
             ::view-transition-old(root),
             ::view-transition-new(root) {
@@ -229,7 +226,7 @@
         })()">
             <div class="flex items-center justify-between px-2">
                 <a href="{{ $baseUrl }}" class="flex items-center gap-2 rounded-medium text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring">
-                    <svg class="size-[18px]" viewBox="0 0 39 39" fill="none" aria-hidden="true">
+                    <svg class="size-3.5" viewBox="0 0 39 39" fill="none" aria-hidden="true">
                         <path fill="currentColor" d="M13.71 13.71v11.495h11.495V13.71zM0 27.504V39h11.496V27.504zM0 0v11.496h11.496V0z" />
                         <path fill="currentColor" fill-opacity=".2" d="M27.41 13.71v11.495h11.496V13.71zM13.701 27.504V39h11.496V27.504zM13.701 0v11.496h11.496V0z" />
                     </svg>
@@ -260,12 +257,36 @@
         </aside>
 
     {{-- Restore the sidebar's scroll position before first paint so it reads
-         as one continuous frame across page navigations. --}}
+         as one continuous frame across page navigations, then FLIP-slide the
+         active pill's background from where it sat on the previous page. Only
+         the .dd-nav-pill background moves — labels never travel with it. --}}
     <script>
         (() => {
             const aside = document.currentScript.previousElementSibling;
+            if (! aside) return;
+
             const stored = sessionStorage.getItem('dd-sidebar-scroll');
-            if (aside && stored !== null) { aside.scrollTop = parseInt(stored, 10); }
+            if (stored !== null) { aside.scrollTop = parseInt(stored, 10); }
+
+            const pill = aside.querySelector('.dd-nav-pill');
+            const from = parseFloat(sessionStorage.getItem('dd-nav-pill-top'));
+            sessionStorage.removeItem('dd-nav-pill-top');
+            if (pill && ! Number.isNaN(from) && ! window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                const shift = from - pill.getBoundingClientRect().top;
+                if (Math.abs(shift) > 1) {
+                    pill.animate(
+                        [{ transform: `translateY(${shift}px)` }, { transform: 'translateY(0)' }],
+                        { duration: 250, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' }
+                    );
+                }
+            }
+
+            {{-- Remember where the pill is when leaving via a sidebar link. --}}
+            aside.addEventListener('click', (event) => {
+                if (! event.target.closest('a[href]')) return;
+                const current = aside.querySelector('.dd-nav-pill');
+                if (current) { sessionStorage.setItem('dd-nav-pill-top', current.getBoundingClientRect().top); }
+            });
         })();
     </script>
 

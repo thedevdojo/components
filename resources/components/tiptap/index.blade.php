@@ -169,6 +169,6 @@
             @endif
         @endforeach
     </div>
-    <div x-ref="editor" class="prose prose-sm sm:prose-base lg:prose-md dark:prose-invert lg:!max-w-full sm:!max-w-full overflow-x-hidden !max-w-full h-[200px] min-h-[200px] w-full overflow-scroll text-foreground"></div>
+    <div x-ref="editor" class="prose prose-sm sm:prose-base dark:prose-invert h-[200px] min-h-[200px] w-full max-w-none overflow-y-auto overflow-x-hidden text-foreground"></div>
     <x-components.tiptap.modals.link :elementId="$id" />
 </div>

@@ -80,7 +80,7 @@ class ComponentsServiceProvider extends ServiceProvider
     {
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'devdojo-components');
 
-        if (! config('components.showcase.enabled', false) || ! $this->app->environment('local')) {
+        if (! config('components.showcase.enabled', false) || ! $this->app->environment(['local', 'testing'])) {
             return;
         }
 
