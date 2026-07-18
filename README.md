@@ -72,18 +72,20 @@ that renders every component in light and dark mode.
 
 ```php
 'preview_route' => [
-    'enabled' => env('COMPONENTS_PREVIEW_ROUTE', true),
+    'enabled' => env('COMPONENTS_PREVIEW_ROUTE', false),
     'middleware' => ['web', 'throttle:120,1'],
 ],
 ```
 
 The standalone preview endpoint (`GET {showcase.route}/{name}/preview`, named
 `devdojo-components.preview`) renders one component as an isolated document —
-input is neutralized and the response is cacheable, so it's safe to leave on
-in production even with the Studio (`showcase.enabled`) turned off. It's what
-powers an app's own component gallery or docs page when it embeds a live
-preview. Set `COMPONENTS_PREVIEW_ROUTE=false` to disable it outright, or
-tighten `middleware` (e.g. a stricter throttle) per app.
+input is neutralized and the response is cacheable, so it's safe to run in
+production even with the Studio (`showcase.enabled`) turned off. It's **off
+by default** out of the box — the consuming app opts in by setting
+`COMPONENTS_PREVIEW_ROUTE=true` (or publishing the config and flipping
+`enabled`) when it wants its own component gallery or docs page to embed a
+live preview. Tighten `middleware` (e.g. a stricter throttle) per app as
+needed.
 
 ## Adding components
 
