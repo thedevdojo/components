@@ -137,10 +137,12 @@ class StudioController
                 .'</div>';
         }
 
-        return view('devdojo-components::studio.preview', [
-            'rendered' => $rendered,
-            'theme' => $request->query('theme') === 'dark' ? 'dark' : 'light',
-        ]);
+        return response()
+            ->view('devdojo-components::studio.preview', [
+                'rendered' => $rendered,
+                'theme' => $request->query('theme') === 'dark' ? 'dark' : 'light',
+            ])
+            ->header('Cache-Control', 'public, max-age=300');
     }
 
     /**

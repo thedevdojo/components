@@ -31,6 +31,7 @@ class ComponentsServiceProvider extends ServiceProvider
         $this->registerTailwindMergeFallbacks();
         $this->registerPreviewComponents();
         $this->registerLivewireComponents();
+        $this->registerPreviewRoute();
         $this->registerStudio();
         $this->registerPublishing();
 
@@ -74,13 +75,43 @@ class ComponentsServiceProvider extends ServiceProvider
     }
 
     /**
+     * Register the standalone preview endpoint. It renders one component as an
+     * isolated document and is safe for production (input is neutralized, output
+     * cacheable), so it registers whenever the studio is active OR the
+     * preview_route flag is on — but only once.
+     */
+    protected function registerPreviewRoute(): void
+    {
+        if (! $this->studioActive() && ! config('components.preview_route.enabled', false)) {
+            return;
+        }
+
+        Route::middleware(config('components.preview_route.middleware', ['web', 'throttle:120,1']))
+            ->prefix(config('components.showcase.route', '/components'))
+            ->group(function (): void {
+                Route::get('/{name}/preview', [StudioController::class, 'preview'])
+                    ->where('name', '[a-z0-9\-]+')
+                    ->name('devdojo-components.preview');
+            });
+    }
+
+    /**
+     * Whether the local-only Component Studio should register.
+     */
+    protected function studioActive(): bool
+    {
+        return config('components.showcase.enabled', false)
+            && $this->app->environment(['local', 'testing']);
+    }
+
+    /**
      * Register the local-only Component Studio routes and views.
      */
     protected function registerStudio(): void
     {
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'devdojo-components');
 
-        if (! config('components.showcase.enabled', false) || ! $this->app->environment(['local', 'testing'])) {
+        if (! $this->studioActive()) {
             return;
         }
 
@@ -96,9 +127,6 @@ class ComponentsServiceProvider extends ServiceProvider
                 Route::get('/guide/{page}', [StudioController::class, 'guide'])
                     ->where('page', '[a-z0-9\-]+')
                     ->name('devdojo-components.guide');
-                Route::get('/{name}/preview', [StudioController::class, 'preview'])
-                    ->where('name', '[a-z0-9\-]+')
-                    ->name('devdojo-components.preview');
                 Route::get('/{name}', [StudioController::class, 'show'])
                     ->where('name', '[a-z0-9\-]+')
                     ->name('devdojo-components.show');

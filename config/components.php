@@ -60,4 +60,22 @@ return [
         'assets' => ['resources/css/app.css'],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Public Preview Route
+    |--------------------------------------------------------------------------
+    |
+    | The studio above is a local-only tool, but its preview endpoint — an
+    | isolated, injection-neutralized render of a single component — is safe
+    | to serve anywhere. Enable this to register GET {showcase.route}/
+    | {name}/preview in every environment (e.g. for a public component
+    | gallery). The throttle guards a public deployment.
+    |
+    */
+
+    'preview_route' => [
+        'enabled' => env('COMPONENTS_PREVIEW_ROUTE', false),
+        'middleware' => ['web', 'throttle:120,1'],
+    ],
+
 ];
