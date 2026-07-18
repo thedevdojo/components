@@ -104,6 +104,39 @@ class Components
     }
 
     /**
+     * The source of a component's declared example file, or null when the
+     * component or example is unknown. Only filenames declared in the
+     * component's manifest resolve — never arbitrary paths.
+     */
+    public static function exampleSource(string $name, string $file): ?string
+    {
+        $component = static::get($name);
+
+        if ($component === null) {
+            return null;
+        }
+
+        // Reject path traversal attempts — only simple filenames allowed
+        if (str_contains($file, '/') || str_contains($file, '\\')) {
+            return null;
+        }
+
+        $requested = Str::of($file)->basename('.blade.php')->value();
+
+        foreach ($component['examples'] as $example) {
+            if (Str::of($example['file'])->basename('.blade.php')->value() !== $requested) {
+                continue;
+            }
+
+            $path = static::sourcePath($component['name'].'/examples/'.$example['file']);
+
+            return is_file($path) ? (string) file_get_contents($path) : null;
+        }
+
+        return null;
+    }
+
+    /**
      * Components grouped by their category, sorted for display.
      *
      * @return Collection<string, Collection<int, array<string, mixed>>>

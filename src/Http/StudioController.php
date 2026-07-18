@@ -268,18 +268,8 @@ class StudioController
      */
     protected function exampleSource(array $component, ?string $requested): ?string
     {
-        if ($requested === null) {
-            return null;
-        }
-
-        foreach ($component['examples'] as $example) {
-            if (Str::of($example['file'])->basename('.blade.php')->value() === $requested) {
-                $file = Components::sourcePath($component['name'].'/examples/'.$example['file']);
-
-                return is_file($file) ? (string) file_get_contents($file) : null;
-            }
-        }
-
-        return null;
+        return $requested === null
+            ? null
+            : Components::exampleSource($component['name'], $requested);
     }
 }

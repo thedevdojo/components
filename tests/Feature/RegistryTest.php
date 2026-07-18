@@ -71,3 +71,24 @@ it('declares slots on every component that renders a default slot', function () 
         }
     }
 });
+
+it('returns a declared example source', function () {
+    $source = DevDojo\Components\Components::exampleSource('button', 'variants');
+
+    expect($source)->toContain('<x-components.button');
+});
+
+it('accepts the full example filename', function () {
+    expect(DevDojo\Components\Components::exampleSource('button', 'variants.blade.php'))
+        ->toBe(DevDojo\Components\Components::exampleSource('button', 'variants'));
+});
+
+it('rejects undeclared example files', function () {
+    expect(DevDojo\Components\Components::exampleSource('button', 'index'))->toBeNull()
+        ->and(DevDojo\Components\Components::exampleSource('button', '../button.json'))->toBeNull()
+        ->and(DevDojo\Components\Components::exampleSource('button', '../../alert/examples/variants'))->toBeNull();
+});
+
+it('returns null for unknown components', function () {
+    expect(DevDojo\Components\Components::exampleSource('nope', 'variants'))->toBeNull();
+});
