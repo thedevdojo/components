@@ -8,7 +8,6 @@ use DevDojo\Components\Markdown;
 use DevDojo\Components\Publisher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
-use Illuminate\Support\Str;
 
 class StudioController
 {
