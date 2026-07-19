@@ -3,7 +3,10 @@
 ])
 
 <template x-teleport="body">
-    <div {{ $attributes->twMerge('pointer-events-none fixed left-1/2 top-0 z-[99999999] h-auto w-full -translate-x-1/2 px-1 pb-4 sm:w-screen sm:max-w-sm sm:px-2') }}
+    {{-- The stack is a single polite live region: screen readers announce toasts as they are
+         inserted, without interrupting speech, and without the double-announcement a per-toast
+         role="alert" would add on top. --}}
+    <div aria-live="polite" {{ $attributes->twMerge('pointer-events-none fixed left-1/2 top-0 z-[99999999] h-auto w-full -translate-x-1/2 px-1 pb-4 sm:w-screen sm:max-w-sm sm:px-2') }}
         x-data="{
             toasts: [],
             toastsProgress: [],
@@ -99,23 +102,22 @@
                     }))"
                     @mouseenter="if (!isTouchDevice) pauseToast(toast.id)"
                     @mouseleave="if (!isTouchDevice) resumeToast(toast.id)"
-                    class="group pointer-events-auto relative left-1/2 top-0 flex w-full -translate-x-1/2 -translate-y-4 scale-95 flex-col items-start overflow-hidden rounded-medium bg-black/70 p-3.5 px-5 text-sm text-white opacity-0 backdrop-blur-md transition duration-300 ease-out sm:max-w-sm sm:rounded-large dark:border dark:border-white/10"
-                    role="alert">
+                    class="group pointer-events-auto relative left-1/2 top-0 flex w-full -translate-x-1/2 -translate-y-4 scale-95 flex-col items-start overflow-hidden rounded-medium bg-black/70 p-3.5 px-5 text-sm text-white opacity-0 backdrop-blur-md transition duration-300 ease-out sm:max-w-sm sm:rounded-large dark:border dark:border-white/10">
                     <div class="absolute inset-0 z-10 h-full bg-white/10 duration-300 ease-linear"
                         :style="`width: ${toastsProgress[toast.id]}%;`"></div>
                     <span class="relative z-20 flex w-full items-start space-x-2">
                         <span x-show="toast.type && types[toast.type]" :class="'h-5 w-5 -ml-1.5 shrink-0 ' + (types[toast.type] ? types[toast.type].colorClass : '')"
                             x-html="types[toast.type] ? icons[types[toast.type].icon] : ''"></span>
                         <span x-text="toast.message"></span>
-                        <span x-on:click="removeToast(toast.id)"
-                            class="absolute right-0 top-1/2 flex h-6 w-6 -translate-y-1/2 translate-x-1.5 cursor-pointer items-center justify-center rounded-small bg-black/50 duration-100 ease-out hover:bg-white/10 hover:opacity-100 group-hover:opacity-50 group-hover:hover:opacity-100 sm:scale-50 sm:opacity-0 group-hover:scale-100"
+                        <button type="button" x-on:click="removeToast(toast.id)" aria-label="Dismiss notification"
+                            class="absolute right-0 top-1/2 flex h-6 w-6 -translate-y-1/2 translate-x-1.5 cursor-pointer items-center justify-center rounded-small bg-black/50 outline-none duration-100 ease-out hover:bg-white/10 hover:opacity-100 focus-visible:ring-2 focus-visible:ring-white/40 group-hover:opacity-50 group-hover:hover:opacity-100 sm:scale-50 sm:opacity-0 group-hover:scale-100 sm:focus-visible:scale-100 sm:focus-visible:opacity-100"
                             :class="{ '-mt-1 -mr-1': toast.description != '' }">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                 <path d="M18 6 6 18" />
                                 <path d="m6 6 12 12" />
                             </svg>
-                        </span>
+                        </button>
                     </span>
                     <p x-show="toast.description" class="relative z-20 pl-[22px] text-xs text-white/70"
                         x-text="toast.description"></p>

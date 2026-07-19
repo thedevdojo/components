@@ -1,7 +1,7 @@
 {
     "name": "toast",
     "label": "Toast",
-    "description": "A global notification stack with progress bars, hover-to-pause, and four types. Trigger from JS, Blade sessions, or Livewire events.",
+    "description": "A global notification stack with progress bars, hover-to-pause, and four types. Trigger from JS, Blade sessions, or Livewire events. The stack is a polite aria-live region and every toast has a keyboard-accessible dismiss button.",
     "category": "Feedback",
     "dependencies": [],
     "props": [
