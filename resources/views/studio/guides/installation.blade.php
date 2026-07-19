@@ -12,6 +12,7 @@
 <x-devdojo-components::studio.code-block class="mt-4" lang="shellscript" code="composer require devdojo/components" />
 
 <h2 id="publish-the-theme" data-toc="Publish the theme">2. Publish the theme</h2>
+<p><strong>Quick path:</strong> <code>php artisan components:install</code> does this step for you — it publishes the theme and adds the import to your <code>app.css</code> in one go.</p>
 <p>Publish the CSS theme tokens (the semantic colors and radii every component references) into your app so you can tweak them later:</p>
 <x-devdojo-components::studio.code-block class="mt-4" lang="shellscript" code="php artisan vendor:publish --tag=components-theme" />
 <p>This writes <code>resources/css/components.css</code>. Import it from your main stylesheet, above your own styles:</p>

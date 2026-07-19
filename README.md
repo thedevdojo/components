@@ -37,19 +37,50 @@ that you own and can edit freely.
 composer require devdojo/components
 ```
 
-Then run the installer to publish the theme and wire it into your CSS:
+Then publish the theme. There are two ways — pick one:
+
+### Quick path: the installer (recommended)
 
 ```bash
 php artisan components:install
 ```
 
 This copies `resources/css/components.css` (the design tokens) and adds
-`@import './components.css';` to your `resources/css/app.css`. Finally, rebuild
-your assets:
+`@import './components.css';` to your `resources/css/app.css`, right after the
+`tailwindcss` import. Re‑run with `--force` to overwrite a previously published
+theme. Finally, rebuild your assets:
 
 ```bash
 npm run build   # or: npm run dev
 ```
+
+### Manual path: publish and wire it yourself
+
+Prefer this when your CSS entry point isn't the standard
+`resources/css/app.css`, or you want to place the import yourself:
+
+```bash
+php artisan vendor:publish --tag=components-theme
+```
+
+Then import the tokens from your main stylesheet, above your own styles:
+
+```css
+@import 'tailwindcss';
+@import './components.css';
+```
+
+If you use the preview namespace (`<x-components.button />`) in your views
+before adding components, also point Tailwind at the package sources so their
+classes compile (components you *add* live in `resources/views` and are picked
+up automatically):
+
+```css
+@source '../../vendor/devdojo/components/resources/components';
+```
+
+Both paths publish the same theme file — the installer is simply the two‑minute
+version of the manual steps.
 
 > The theme enables **class‑based dark mode** — add the `dark` class to your
 > `<html>` element to switch.
@@ -68,13 +99,40 @@ that renders every component in light and dark mode.
 
 ## Configuration
 
-`config/components.php` (publish with `php artisan vendor:publish --tag=components-config`):
+`config/components.php` (publish with `php artisan vendor:publish --tag=components-config`).
+The full reference:
 
 ```php
-'preview_route' => [
-    'enabled' => env('COMPONENTS_PREVIEW_ROUTE', false),
-    'middleware' => ['web', 'throttle:120,1'],
-],
+return [
+
+    // Register the preview namespace so every component can be used as
+    // <x-components.button /> straight from the package, before you add it.
+    // Disable to stop the bundled components from being registered at all.
+    'preview' => true,
+
+    // Where `php artisan components:add` writes components, relative to your
+    // resource path. Each component becomes its own folder, e.g.
+    // resources/views/components/button/index.blade.php → <x-button />.
+    'path' => 'views/components',
+
+    // The built-in gallery/Studio. Only ever registered in the "local"
+    // environment. `middleware` must include the session + CSRF stack (the
+    // "web" group) so the Livewire "add" buttons can post back; `assets` are
+    // the Vite entry points loaded by the studio pages and preview iframe.
+    'showcase' => [
+        'enabled' => env('COMPONENTS_SHOWCASE', true),
+        'route' => '/components',
+        'middleware' => ['web'],
+        'assets' => ['resources/css/app.css'],
+    ],
+
+    // The standalone, production-safe preview endpoint (details below).
+    'preview_route' => [
+        'enabled' => env('COMPONENTS_PREVIEW_ROUTE', false),
+        'middleware' => ['web', 'throttle:120,1'],
+    ],
+
+];
 ```
 
 The standalone preview endpoint (`GET {showcase.route}/{name}/preview`, named
