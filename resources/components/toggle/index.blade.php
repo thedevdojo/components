@@ -38,10 +38,13 @@
     x-bind:data-checked="checked ? true : null">
     <input
         type="checkbox"
+        role="switch"
         id="{{ $id }}"
         class="peer sr-only"
         x-ref="toggle"
         x-on:change="checked = $event.target.checked"
+        aria-checked="{{ $checked ? 'true' : 'false' }}"
+        x-bind:aria-checked="checked ? 'true' : 'false'"
         @checked($checked)
         @disabled($disabled)
         {{ $attributes->withoutTwMergeClasses()->except(['class']) }}

@@ -1,7 +1,7 @@
 {
     "name": "toggle",
     "label": "Toggle",
-    "description": "An animated switch control for boolean settings, with label, description, and three sizes. Works with wire:model.",
+    "description": "An animated switch control for boolean settings, with label, description, and three sizes. Works with wire:model. Announced as a switch (role=\"switch\" on the underlying checkbox) to assistive technology.",
     "category": "Forms",
     "dependencies": [],
     "props": [

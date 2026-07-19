@@ -11,6 +11,8 @@
     $attributes = $attributes->whereDoesntStartWith('wire:model');
     $openExpression = $wireModel ? "\$wire.entangle('{$wireModel}')" : ($open ? 'true' : 'false');
     $alignClasses = $align === 'top' ? 'items-start justify-center pt-[12vh] p-4' : 'items-center justify-center p-4';
+    // A stable id for the header heading so the dialog can reference it via aria-labelledby.
+    $titleId = ($attributes->get('id') ? $attributes->get('id') : uniqid('dd-modal-')).'-title';
 @endphp
 
 <div x-data="{ modalOpen: {!! $openExpression !!} }" x-init="$watch('modalOpen', function (value) {
@@ -38,9 +40,9 @@
         <div x-show="modalOpen" x-cloak class="fixed left-0 top-0 flex h-dvh w-screen items-center justify-center" @open-modal.window="if ($event.detail.id === $el.id) modalOpen = true" @close-modal.window="if ($event.detail.id === $el.id) modalOpen = false" {{ $attributes->withoutTwMergeClasses()->only('id') }} style="z-index: {{ $zIndex }}">
             <div x-show="modalOpen" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-300" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="absolute inset-0 h-full w-full bg-black/55 backdrop-blur-sm" @click="modalOpen = false"></div>
             <div x-show="modalOpen" x-trap.inert.noscroll="modalOpen" x-transition:enter="ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-2 sm:scale-95" class="flex h-full w-full {{ $alignClasses }}">
-                <div {{ $attributes->twMerge('relative w-full bg-card text-card-foreground px-7 py-6 border border-border shadow-pop sm:max-w-lg rounded-large') }}>
+                <div role="dialog" aria-modal="true" @isset($header) aria-labelledby="{{ $titleId }}" @endisset {{ $attributes->twMerge('relative w-full bg-card text-card-foreground px-7 py-6 border border-border shadow-pop sm:max-w-lg rounded-large') }}>
                     @isset($header)
-                        <h2 {{ $attributes->twMergeFor('header', '-translate-y-1.5 text-lg font-medium mb-2') }}>{{ $header }}</h2>
+                        <h2 id="{{ $titleId }}" {{ $attributes->twMergeFor('header', '-translate-y-1.5 text-lg font-medium mb-2') }}>{{ $header }}</h2>
                     @endisset
                     {{ $content ?? '' }}
                     @isset($footer)

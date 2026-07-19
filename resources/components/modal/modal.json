@@ -1,7 +1,7 @@
 {
     "name": "modal",
     "label": "Modal",
-    "description": "An accessible, teleported dialog with focus trapping, header/content/footer slots, and event-driven open/close.",
+    "description": "An accessible, teleported dialog (role=\"dialog\", labelled by its header) with focus trapping, header/content/footer slots, and event-driven open/close.",
     "category": "Overlays",
     "dependencies": ["button"],
     "props": [
