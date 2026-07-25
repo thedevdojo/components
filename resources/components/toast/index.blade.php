@@ -12,10 +12,12 @@
             toastsProgress: [],
             sessionToast: @js(session('toast')),
             closeInterval: {{ (int) $duration }},
-            addToast(message, type = 'success', description = '') {
+            addToast(message, type = 'success', description = '', action = null) {
                 if (! message) { return; }
                 const id = Date.now() + Math.random();
-                const toast = { id, type, message, description, startTime: null, rafId: null, pausedAt: null, totalPausedTime: 0 };
+                // action: { label, href } — renders a small CTA button so an
+                // error can carry its own next step (e.g. quota → upgrade).
+                const toast = { id, type, message, description, action, startTime: null, rafId: null, pausedAt: null, totalPausedTime: 0 };
                 this.toasts.unshift(toast);
                 this.toastsProgress[id] = 0;
                 const duration = this.closeInterval;
@@ -82,10 +84,10 @@
             }
         }"
         x-init="(() => {
-            window.toast = (message, type, description) => addToast(message, type, description);
-            if (sessionToast) { addToast(sessionToast.message, sessionToast.type, sessionToast.description); }
+            window.toast = (message, type, description, action) => addToast(message, type, description, action);
+            if (sessionToast) { addToast(sessionToast.message, sessionToast.type, sessionToast.description, sessionToast.action ?? null); }
         })()"
-        @pop-toast.window="if (typeof (event.detail[0]) != 'undefined') { addToast(event.detail[0].message, event.detail[0].type, event.detail[0].description) } else { addToast(event.detail.message, event.detail.type, event.detail.description); }"
+        @pop-toast.window="if (typeof (event.detail[0]) != 'undefined') { addToast(event.detail[0].message, event.detail[0].type, event.detail[0].description, event.detail[0].action) } else { addToast(event.detail.message, event.detail.type, event.detail.description, event.detail.action); }"
         x-show="toasts.length"
         x-transition:enter="transition ease-in-out duration-300"
         x-transition:enter-start="opacity-0"
@@ -121,6 +123,10 @@
                     </span>
                     <p x-show="toast.description" class="relative z-20 pl-[22px] text-xs text-white/70"
                         x-text="toast.description"></p>
+                    {{-- Optional CTA — the toast carries its own next step --}}
+                    <a x-show="toast.action && toast.action.href" x-cloak :href="toast.action?.href"
+                        class="relative z-20 mt-2 ml-[22px] inline-flex items-center rounded-md bg-white/15 px-2.5 py-1 text-xs font-semibold text-white transition-colors hover:bg-white/25"
+                        x-text="toast.action?.label"></a>
                 </div>
             </template>
         </div>
