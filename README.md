@@ -7,6 +7,12 @@ to keep and customize. No black boxes, no lock‑in.
 Built with [Tailwind CSS](https://tailwindcss.com) v4 and
 [Alpine.js](https://alpinejs.dev). Works great with Livewire.
 
+The semantic variables in the published stylesheet are also a versioned
+portable styling contract: `devdojo.theme@1`. Designer blocks that declare
+this contract carry their HTML/CSS/JS but inherit colors, fonts, radii, and
+dark-mode values from the app they are inserted into. The canonical contract
+metadata is available from `DevDojo\Components\Theme\ThemeContract`.
+
 ```blade
 <x-button>Get started</x-button>
 <x-input label="Email" type="email" wire:model="email" />
