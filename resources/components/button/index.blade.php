@@ -76,6 +76,12 @@
 @endphp
 
 @php
+    // An href makes this a link — render a real anchor unless the caller
+    // explicitly asked for a submit button.
+    if ($href !== null && $type !== 'submit') {
+        $type = 'a';
+    }
+
     switch ($type ?? 'button') {
         case 'button':
             $typeAttr = 'button type="button"';
